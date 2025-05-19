@@ -1,0 +1,34 @@
+services:
+  snapit-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: snapit-client
+    env_file:
+      - .env
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      # HTTP router with redirect middleware to HTTPS
+      - "traefik.http.routers.snapit-client-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.snapit-client-http.entrypoints=http"
+      - "traefik.http.routers.snapit-client-http.middlewares=https-redirect"
+      - "traefik.http.routers.snapit-client-http.priority=100"
+
+      # HTTPS router
+      - "traefik.http.routers.snapit-client-https.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.snapit-client-https.entrypoints=https"
+      - "traefik.http.routers.snapit-client-https.tls=true"
+      - "traefik.http.routers.snapit-client-https.tls.certresolver=le"
+      - "traefik.http.routers.snapit-client-https.service=snapit-client-service"
+      - "traefik.http.routers.snapit-client-https.priority=100"
+      - "traefik.http.services.snapit-client-service.loadbalancer.server.port=3000"
+
+      # Middleware definition for HTTP to HTTPS redirection
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+
+networks:
+  traefik-public:
+    external: true

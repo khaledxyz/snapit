@@ -1,0 +1,47 @@
+services:
+  snapit-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: snapit-server
+    env_file:
+      - .env
+    networks:
+      - traefik-public
+      - snapit-backend-net
+    labels:
+      - "traefik.enable=true"
+      # HTTP router with redirect middleware to HTTPS
+      - "traefik.http.routers.snapit-server-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.snapit-server-http.entrypoints=http"
+      - "traefik.http.routers.snapit-server-http.middlewares=https-redirect"
+
+      # HTTPS router
+      - "traefik.http.routers.snapit-server-https.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.snapit-server-https.entrypoints=https"
+      - "traefik.http.routers.snapit-server-https.tls=true"
+      - "traefik.http.routers.snapit-server-https.tls.certresolver=le"
+      - "traefik.http.routers.snapit-server-https.service=snapit-server-service"
+      - "traefik.http.services.snapit-server-service.loadbalancer.server.port=5000"
+
+      # Middleware definition for HTTP to HTTPS redirection
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+
+  mongo:
+    image: mongo:8
+    container_name: snapit-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - snapit-backend-net
+
+networks:
+  traefik-public:
+    external: true
+  snapit-backend-net:
+    external: true
+
+volumes:
+  mongo_data:
