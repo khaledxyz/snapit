@@ -31,6 +31,8 @@ ENV NEXT_SHARP_PATH /tmp/node_modules/sharp
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Ensure public folder exists before copying
+RUN [ -d public ] || mkdir public
 COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
