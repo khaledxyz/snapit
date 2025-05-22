@@ -11,24 +11,28 @@ services:
       - snapit-backend-net
     labels:
       - "traefik.enable=true"
-      # HTTP router with redirect middleware to HTTPS
+      # HTTP router with redirect middleware to HTTPS and strip /api prefix
       - "traefik.http.routers.snapit-server-http.rule=Host(`${DOMAIN}`) && PathPrefix(`${DOMAIN_PATH}`)"
       - "traefik.http.routers.snapit-server-http.entrypoints=http"
-      - "traefik.http.routers.snapit-server-http.middlewares=https-redirect"
+      - "traefik.http.routers.snapit-server-http.middlewares=https-redirect,strip-prefix"
       - "traefik.http.routers.snapit-server-http.priority=${TRAEFIK_PRIORITY}"
 
-      # HTTPS router
+      # HTTPS router with strip /api prefix
       - "traefik.http.routers.snapit-server-https.rule=Host(`${DOMAIN}`) && PathPrefix(`${DOMAIN_PATH}`)"
       - "traefik.http.routers.snapit-server-https.entrypoints=https"
       - "traefik.http.routers.snapit-server-https.tls=true"
       - "traefik.http.routers.snapit-server-https.tls.certresolver=le"
       - "traefik.http.routers.snapit-server-https.service=snapit-server-service"
+      - "traefik.http.routers.snapit-server-https.middlewares=strip-prefix"
       - "traefik.http.routers.snapit-server-https.priority=${TRAEFIK_PRIORITY}"
       - "traefik.http.services.snapit-server-service.loadbalancer.server.port=5000"
 
       # Middleware definition for HTTP to HTTPS redirection
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+      # Middleware to strip /api prefix
+      - "traefik.http.middlewares.strip-prefix.stripprefix.prefixes=${DOMAIN_PATH}"
+      - "traefik.http.middlewares.strip-prefix.stripprefix.forceSlash=false"
 
   mongo:
     image: mongo:8
