@@ -15,6 +15,7 @@ services:
       - "traefik.http.routers.snapit-server-http.rule=Host(`${DOMAIN}`) && PathPrefix(`${DOMAIN_PATH}`)"
       - "traefik.http.routers.snapit-server-http.entrypoints=http"
       - "traefik.http.routers.snapit-server-http.middlewares=https-redirect"
+      - "traefik.http.routers.snapit-server-http.priority=${TRAEFIK_PRIORITY}"
 
       # HTTPS router
       - "traefik.http.routers.snapit-server-https.rule=Host(`${DOMAIN}`) && PathPrefix(`${DOMAIN_PATH}`)"
@@ -22,6 +23,7 @@ services:
       - "traefik.http.routers.snapit-server-https.tls=true"
       - "traefik.http.routers.snapit-server-https.tls.certresolver=le"
       - "traefik.http.routers.snapit-server-https.service=snapit-server-service"
+      - "traefik.http.routers.snapit-server-https.priority=${TRAEFIK_PRIORITY}"
       - "traefik.http.services.snapit-server-service.loadbalancer.server.port=5000"
 
       # Middleware definition for HTTP to HTTPS redirection
