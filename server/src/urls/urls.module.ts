@@ -10,5 +10,6 @@ import { Url, UrlSchema } from './schemas/url.schema';
   ],
   controllers: [UrlsController],
   providers: [UrlsService],
+  exports: [UrlsService],
 })
 export class UrlsModule { }
