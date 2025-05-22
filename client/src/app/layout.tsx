@@ -6,7 +6,6 @@ import { Footer } from "@/components/footer";
 import { QueryProvider } from "@/providers/query-client-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Script from "next/script";
 
 function AppProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -25,9 +24,6 @@ function AppProviders({ children }: { children: React.ReactNode }) {
     </ThemeProvider>
   );
 }
-
-const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID
-const umamiScriptUrl = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL
 
 export const metadata: Metadata = {
   title: "Create Next App",
