@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
+      {/* <head>
         {umamiWebsiteId && umamiScriptUrl && (
           <Script
             async
@@ -47,7 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             strategy="afterInteractive"
           />
         )}
-      </head>
+      </head> */}
       <body className='relative antialiased bg-background flex flex-col min-h-screen'>
         <AppProviders>
           <Header />
