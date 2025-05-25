@@ -1,0 +1,15 @@
+.git
+.next
+.vscode
+.certificates
+node_modules
+.dockerignore
+.editorconfig
+.eslintrc.js
+.gitignore
+.npmrc
+.prettierrc.json
+.stylelintrc.json
+Dockerfile
+npm-debug.log
+README.md
