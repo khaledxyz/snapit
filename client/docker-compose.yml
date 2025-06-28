@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     networks:
-      - traefik-public
+      - proxy
     labels:
       - "traefik.enable=true"
       # HTTP router with redirect middleware to HTTPS
@@ -30,5 +30,6 @@ services:
       - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
 
 networks:
-  traefik-public:
+  proxy:
     external: true
+    name: ${PROXY}

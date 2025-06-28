@@ -7,8 +7,8 @@ services:
     env_file:
       - .env
     networks:
-      - traefik-public
-      - snapit-backend-net
+      - proxy
+      - server-net
     labels:
       - 'traefik.enable=true'
       # HTTP router with redirect middleware to HTTPS
@@ -35,13 +35,15 @@ services:
     volumes:
       - mongo_data:/data/db
     networks:
-      - snapit-backend-net
+      - server-net
 
 networks:
-  traefik-public:
+  proxy:
     external: true
-  snapit-backend-net:
+    name: ${PROXY}
+  server-net:
     external: true
+    name: ${SERVER_NET}
 
 volumes:
   mongo_data:
