@@ -1,0 +1,27 @@
+{
+  "name": "snapit",
+  "version": "1.0.0-beta.1",
+  "description": " Simple URL shortener",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "install:frontend": "cd client && pnpm install",
+    "install:backend": "cd server && pnpm install",
+    "install": "pnpm run install:frontend && pnpm run install:backend",
+    "dev:backend": "cd server && pnpm run start:dev",
+    "dev:frontend": "cd client && pnpm run dev",
+    "dev": "concurrently \"pnpm:dev:backend\" \"pnpm:dev:frontend\"",
+    "build:frontend": "cd client && pnpm run build",
+    "build:backend": "cd server && pnpm run build",
+    "build": "pnpm run build:frontend && pnpm run build:backend",
+    "start:backend": "cd server && pnpm start",
+    "start:frontend": "cd client && pnpm start",
+    "start": "concurrently \"pnpm:start:backend\" \"pnpm:start:frontend\""
+  },
+  "keywords": [],
+  "author": "khaledxyz",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
