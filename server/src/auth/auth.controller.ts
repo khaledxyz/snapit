@@ -48,7 +48,7 @@ export class AuthController {
         return res.status(500).json({ error: 'Login failed' });
       }
       // Redirect to your client app after successful login
-      return res.redirect('https://localhost:3000/dashboard');
+      return res.redirect(`${process.env.CLIENT_URL}/dashboard`);
     });
   }
 
