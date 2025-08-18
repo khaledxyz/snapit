@@ -14,7 +14,7 @@ steps:
       - path:
           include: ["client/**"]
     commands:
-      - echo "$${ENV_FILE}" > client/.env
+      - echo "$${ENV_FILE_CLIENT}" > client/.env
       - cd client
       - docker compose pull
       - docker compose build
@@ -31,7 +31,7 @@ steps:
       - path:
           include: ["server/**"]
     commands:
-      - echo "$${ENV_FILE}" > server/.env
+      - echo "$${ENV_FILE_SERVER}" > server/.env
       - cd server
       - docker compose pull
       - docker compose build
