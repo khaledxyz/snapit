@@ -21,4 +21,4 @@ import { DatabaseModule } from '../database/database.module';
   providers: [AuthService, LocalStrategy, GithubStrategy, SessionSerializer],
   exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

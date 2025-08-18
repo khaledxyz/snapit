@@ -7,9 +7,10 @@ import { join } from 'path';
  * @returns Full path to the cache directory
  */
 export function getCacheDirectory(subdir: string): string {
-    const cacheRoot = platform() === 'win32'
-        ? process.env.LOCALAPPDATA || join(homedir(), 'AppData', 'Local')
-        : process.env.XDG_CACHE_HOME || join(homedir(), '.cache');
+  const cacheRoot =
+    platform() === 'win32'
+      ? process.env.LOCALAPPDATA || join(homedir(), 'AppData', 'Local')
+      : process.env.XDG_CACHE_HOME || join(homedir(), '.cache');
 
-    return join(cacheRoot, 'snapit', subdir);
+  return join(cacheRoot, 'snapit', subdir);
 }

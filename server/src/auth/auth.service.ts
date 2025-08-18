@@ -10,36 +10,54 @@ import { Request, Response } from 'express';
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<DatabaseSchema>,
+    @Inject(DATABASE_CONNECTION)
+    private readonly db: NodePgDatabase<DatabaseSchema>,
     private readonly passwordService: PasswordService,
-  ) { }
+  ) {}
 
   async login(email: string, password: string): Promise<User> {
-    const result = await this.db.select().from(users).where(eq(users.email, email)).limit(1);
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
     const user = result[0];
 
     if (!user) throw new UnauthorizedException('auth/user-not-found');
 
     // Check if user has a password (OAuth users might not have one)
-    if (!user.password) throw new UnauthorizedException('auth/oauth-user-no-password');
+    if (!user.password)
+      throw new UnauthorizedException('auth/oauth-user-no-password');
 
-    const isPasswordValid = await this.passwordService.verifyPassword(user.password, password);
-    if (!isPasswordValid) throw new UnauthorizedException('auth/invalid-password');
+    const isPasswordValid = await this.passwordService.verifyPassword(
+      user.password,
+      password,
+    );
+    if (!isPasswordValid)
+      throw new UnauthorizedException('auth/invalid-password');
 
     return user;
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
-    const result = await this.db.select().from(users).where(eq(users.email, email)).limit(1);
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
     return result[0] || null;
   }
 
   async validateOAuthLogin(payload: OAuthUserDto): Promise<User> {
     try {
       // Check if a user already exists with this provider using JSONB query
-      const userWithProvider = await this.db.select().from(users).where(
-        sql`${users.providers}::jsonb @> ${JSON.stringify([{ name: payload.provider, id: payload.providerId }])}::jsonb`
-      ).limit(1);
+      const userWithProvider = await this.db
+        .select()
+        .from(users)
+        .where(
+          sql`${users.providers}::jsonb @> ${JSON.stringify([{ name: payload.provider, id: payload.providerId }])}::jsonb`,
+        )
+        .limit(1);
 
       if (userWithProvider.length > 0) {
         return userWithProvider[0];
@@ -52,22 +70,26 @@ export class AuthService {
         // User exists with this email, add the new provider to their account
         const currentProviders = existingUserByEmail.providers || [];
         const providerExists = currentProviders.some(
-          p => p.name === payload.provider && p.id === payload.providerId
+          (p) => p.name === payload.provider && p.id === payload.providerId,
         );
 
         if (!providerExists) {
-          const updatedProviders = [...currentProviders, {
-            name: payload.provider,
-            id: payload.providerId,
-            email: payload.email,
-            username: payload.username,
-            connectedAt: new Date()
-          }];
+          const updatedProviders = [
+            ...currentProviders,
+            {
+              name: payload.provider,
+              id: payload.providerId,
+              email: payload.email,
+              username: payload.username,
+              connectedAt: new Date(),
+            },
+          ];
 
-          const [updatedUser] = await this.db.update(users)
+          const [updatedUser] = await this.db
+            .update(users)
             .set({
               providers: updatedProviders,
-              updatedAt: new Date()
+              updatedAt: new Date(),
             })
             .where(eq(users.id, existingUserByEmail.id))
             .returning();
@@ -80,16 +102,21 @@ export class AuthService {
       // Create a new user with the OAuth provider
       const newUser = {
         email: payload.email,
-        providers: [{
-          name: payload.provider,
-          id: payload.providerId,
-          email: payload.email,
-          username: payload.username,
-          connectedAt: new Date()
-        }]
+        providers: [
+          {
+            name: payload.provider,
+            id: payload.providerId,
+            email: payload.email,
+            username: payload.username,
+            connectedAt: new Date(),
+          },
+        ],
       };
 
-      const [createdUser] = await this.db.insert(users).values(newUser).returning();
+      const [createdUser] = await this.db
+        .insert(users)
+        .values(newUser)
+        .returning();
       return createdUser;
     } catch (error) {
       console.error('Error in validateOAuthLogin:', error);

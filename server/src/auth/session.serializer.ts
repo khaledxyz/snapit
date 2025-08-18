@@ -7,13 +7,24 @@ import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-  constructor(@Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<DatabaseSchema>) { super() }
+  constructor(
+    @Inject(DATABASE_CONNECTION)
+    private readonly db: NodePgDatabase<DatabaseSchema>,
+  ) {
+    super();
+  }
 
-  serializeUser(user: User, done: (err: Error | null, id?: string) => void): void {
+  serializeUser(
+    user: User,
+    done: (err: Error | null, id?: string) => void,
+  ): void {
     done(null, user.id);
   }
 
-  async deserializeUser(payload: any, done: (err: any, user?: any) => void): Promise<any> {
+  async deserializeUser(
+    payload: any,
+    done: (err: any, user?: any) => void,
+  ): Promise<any> {
     try {
       const [user] = await this.db
         .select()
@@ -21,7 +32,7 @@ export class SessionSerializer extends PassportSerializer {
         .where(eq(users.id, payload))
         .limit(1);
 
-      done(null, user)
+      done(null, user);
     } catch (error) {
       done(error, null);
     }

@@ -3,6 +3,6 @@ import { CodeGeneratorService } from './code-generator.service';
 
 @Module({
   providers: [CodeGeneratorService],
-  exports: [CodeGeneratorService]
+  exports: [CodeGeneratorService],
 })
-export class CodeGeneratorModule { }
+export class CodeGeneratorModule {}

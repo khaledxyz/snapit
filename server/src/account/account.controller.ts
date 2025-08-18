@@ -5,6 +5,5 @@ import { SessionAuthGuard } from 'src/auth/guards/session-auth.guard';
 @UseGuards(SessionAuthGuard)
 @Controller('account')
 export class AccountController {
-  constructor(private readonly service: AccountService) { }
-
+  constructor(private readonly service: AccountService) {}
 }

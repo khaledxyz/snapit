@@ -5,4 +5,4 @@ import { PasswordService } from './password.service';
   providers: [PasswordService],
   exports: [PasswordService],
 })
-export class PasswordModule { }
+export class PasswordModule {}

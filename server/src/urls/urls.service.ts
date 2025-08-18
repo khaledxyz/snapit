@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, Inject, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { customAlphabet } from 'nanoid';
 import { eq, desc, sql, and } from 'drizzle-orm';
@@ -12,10 +17,11 @@ import { PasswordService } from 'src/password/password.service';
 @Injectable()
 export class UrlsService {
   constructor(
-    @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<DatabaseSchema>,
+    @Inject(DATABASE_CONNECTION)
+    private readonly db: NodePgDatabase<DatabaseSchema>,
     private readonly generator: CodeGeneratorService,
-    private readonly password: PasswordService
-  ) { }
+    private readonly password: PasswordService,
+  ) {}
 
   async create(body: CreateUrlDto, user?: UserDto): Promise<Url> {
     const {
@@ -28,7 +34,8 @@ export class UrlsService {
     let shortCode = inputShortCode;
     if (shortCode) {
       const urlExists = await this.findOne(shortCode).catch(() => null);
-      if (urlExists) throw new ConflictException('urls/short-code-already-exists');
+      if (urlExists)
+        throw new ConflictException('urls/short-code-already-exists');
     } else {
       shortCode = this.generator.generate();
     }
@@ -74,12 +81,7 @@ export class UrlsService {
   async delete(shortCode: string, user?: UserDto): Promise<void> {
     const result = await this.db
       .delete(urls)
-      .where(
-        and(
-          eq(urls.shortCode, shortCode),
-          eq(urls.userId, user.id)
-        )
-      )
+      .where(and(eq(urls.shortCode, shortCode), eq(urls.userId, user.id)))
       .returning();
 
     if (result.length === 0) throw new NotFoundException('URL not found');

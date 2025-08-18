@@ -1,4 +1,14 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SessionAuthGuard } from './guards/session-auth.guard';
@@ -12,7 +22,7 @@ import { AuthService } from './auth.service';
 @UseInterceptors(new serializeInterceptor(UserDto))
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly service: AuthService) { }
+  constructor(private readonly service: AuthService) {}
 
   @Get('me')
   @UseGuards(SessionAuthGuard)
@@ -36,11 +46,15 @@ export class AuthController {
 
   @Get('github')
   @UseGuards(AuthGuard('github'))
-  async githubAuth() { }
+  async githubAuth() {}
 
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
-  async githubCallback(@AuthUser() user: User, @Req() req: any, @Res() res: Response) {
+  async githubCallback(
+    @AuthUser() user: User,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
     // Let Passport handle the session serialization
     req.login(user, (err) => {
       if (err) {
@@ -51,5 +65,4 @@ export class AuthController {
       return res.redirect(`${process.env.CLIENT_URL}/dashboard`);
     });
   }
-
 }

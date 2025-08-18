@@ -15,22 +15,22 @@ function AppProviders({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <QueryProvider>
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
+        <TooltipProvider>{children}</TooltipProvider>
       </QueryProvider>
       <Toaster richColors position="bottom-center" />
     </ThemeProvider>
   );
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fonts} font-sans relative antialiased bg-background flex flex-col min-h-screen`}>
-        <AppProviders>
-          {children}
-        </AppProviders>
+      <body
+        className={`${fonts} font-sans relative antialiased bg-background flex flex-col min-h-screen`}
+      >
+        <AppProviders>{children}</AppProviders>
       </body>
     </html>
   );

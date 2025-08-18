@@ -1,19 +1,24 @@
-export type TQueryKey<TKey, TListQuery = Record<string, unknown>, TDetailQuery = string> = {
-  all: readonly [TKey]
-  lists: () => readonly [TKey, "list"]
-  list: (query: TListQuery) => readonly [TKey, "list", { query: TListQuery }]
-  details: () => readonly [TKey, "detail"]
-  detail: (id: TDetailQuery, query: TListQuery) => readonly [
-    TKey, "detail", TDetailQuery, { query: TListQuery }
-  ]
-}
+export type TQueryKey<
+  TKey,
+  TListQuery = Record<string, unknown>,
+  TDetailQuery = string,
+> = {
+  all: readonly [TKey];
+  lists: () => readonly [TKey, "list"];
+  list: (query: TListQuery) => readonly [TKey, "list", { query: TListQuery }];
+  details: () => readonly [TKey, "detail"];
+  detail: (
+    id: TDetailQuery,
+    query: TListQuery,
+  ) => readonly [TKey, "detail", TDetailQuery, { query: TListQuery }];
+};
 
 export const queryKeysFactory = <
   T,
   TListQueryType = Record<string, unknown>,
-  TDetailQueryType = string
+  TDetailQueryType = string,
 >(
-  globalKey: T
+  globalKey: T,
 ) => {
   const queryKeyFactory: TQueryKey<T, TListQueryType, TDetailQueryType> = {
     all: [globalKey],
@@ -23,6 +28,6 @@ export const queryKeysFactory = <
     details: () => [...queryKeyFactory.all, "detail"] as const,
     detail: (id: TDetailQueryType, query: TListQueryType) =>
       [...queryKeyFactory.details(), id, { query }] as const,
-  }
-  return queryKeyFactory
-}
+  };
+  return queryKeyFactory;
+};

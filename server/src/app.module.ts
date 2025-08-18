@@ -21,4 +21,4 @@ import { MailerModule } from './mailer/mailer.module';
   controllers: [AppController],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

@@ -7,12 +7,9 @@ import { MeController } from './me.controller';
 import { MeService } from './me.service';
 
 @Module({
-  imports: [
-    DatabaseModule,
-    PasswordModule,
-  ],
+  imports: [DatabaseModule, PasswordModule],
   controllers: [UsersController, MeController],
   providers: [UsersService, MeService],
   exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

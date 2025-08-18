@@ -11,4 +11,4 @@ import { PasswordModule } from 'src/password/password.module';
   providers: [UrlsService],
   exports: [UrlsService],
 })
-export class UrlsModule { }
+export class UrlsModule {}

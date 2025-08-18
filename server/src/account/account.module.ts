@@ -8,4 +8,4 @@ import { DatabaseModule } from 'src/database/database.module';
   controllers: [AccountController],
   providers: [AccountService],
 })
-export class UserModule { }
+export class UserModule {}

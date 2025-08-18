@@ -5,16 +5,18 @@ import { SSLService } from './ssl';
 /**
  * Create application configuration with SSL support in development
  */
-export async function getAppConfig(): Promise<NestApplicationOptions & NestApplicationContextOptions> {
-    const httpsOptions = await SSLService.createHttpsOptions();
+export async function getAppConfig(): Promise<
+  NestApplicationOptions & NestApplicationContextOptions
+> {
+  const httpsOptions = await SSLService.createHttpsOptions();
 
-    const config: NestApplicationOptions & NestApplicationContextOptions = {};
+  const config: NestApplicationOptions & NestApplicationContextOptions = {};
 
-    if (httpsOptions) {
-        Object.assign(config, { httpsOptions });
-    }
+  if (httpsOptions) {
+    Object.assign(config, { httpsOptions });
+  }
 
-    return config;
+  return config;
 }
 
 // For backward compatibility

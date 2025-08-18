@@ -10,12 +10,12 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export function getInitials(name: string, limit: number = 2): string {
-  if (!name || typeof name !== 'string') return '';
+  if (!name || typeof name !== "string") return "";
 
   return name
     .trim()
     .split(/\s+/) // Split by whitespace
     .slice(0, limit) // Take only the first 'limit' names
-    .map(word => word.charAt(0).toUpperCase()) // Get first letter and capitalize
-    .join('');
+    .map((word) => word.charAt(0).toUpperCase()) // Get first letter and capitalize
+    .join("");
 }

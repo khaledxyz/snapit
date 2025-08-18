@@ -12,10 +12,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, appConfig);
   const configService = app.get(ConfigService);
 
-  const allowedOrigins = configService.get<string>('ALLOWED_ORIGINS')
-    ?.split(',')
-    ?.map(origin => origin.trim())
-    ?.filter(origin => origin.length > 0) || [];
+  const allowedOrigins =
+    configService
+      .get<string>('ALLOWED_ORIGINS')
+      ?.split(',')
+      ?.map((origin) => origin.trim())
+      ?.filter((origin) => origin.length > 0) || [];
 
   app.enableCors({
     origin: allowedOrigins,
@@ -27,9 +29,10 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      exceptionFactory: process.env.NODE_ENV === 'production'
-        ? (errors) => new BadRequestException('Bad Request')
-        : undefined, // undefined means use default behavior
+      exceptionFactory:
+        process.env.NODE_ENV === 'production'
+          ? (errors) => new BadRequestException('Bad Request')
+          : undefined, // undefined means use default behavior
     }),
   );
 

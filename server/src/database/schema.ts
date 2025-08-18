@@ -8,8 +8,8 @@ export * from '../urls/schemas/url.schema';
 
 // Combined schema object for Drizzle - this is what you pass to drizzle()
 export const schema = {
-    users,
-    urls,
+  users,
+  urls,
 } as const;
 
 // Export the schema type for TypeScript inference
