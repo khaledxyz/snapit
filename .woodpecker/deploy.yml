@@ -1,0 +1,38 @@
+when:
+  - event: push
+    branch: master
+
+steps:
+  - name: deploy-client
+    image: docker:cli
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      ENV_FILE:
+        from_secret: env_file
+    when:
+      - path:
+          include: ["client/**"]
+    commands:
+      - echo "$${ENV_FILE}" > client/.env
+      - cd client
+      - docker compose pull
+      - docker compose build
+      - docker compose up -d
+
+  - name: deploy-server
+    image: docker:cli
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      ENV_FILE:
+        from_secret: env_file
+    when:
+      - path:
+          include: ["server/**"]
+    commands:
+      - echo "$${ENV_FILE}" > server/.env
+      - cd server
+      - docker compose pull
+      - docker compose build
+      - docker compose up -d
