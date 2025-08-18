@@ -8,31 +8,43 @@ steps:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      ENV_FILE:
-        from_secret: env_file
-    when:
-      - path:
-          include: ["client/**"]
+      ENV_FILE_CLIENT:
+        from_secret: env_file_client
     commands:
+      # Write env file
       - echo "$${ENV_FILE_CLIENT}" > client/.env
+
+      # Only rebuild if there are changes
       - cd client
-      - docker compose pull
-      - docker compose build
+      - git fetch origin master
+      - if [ "$(git diff origin/master --name-only | grep '^')" != "" ]; then
+        docker compose pull;
+        docker compose build;
+        fi
+
+      # Bring up container
       - docker compose up -d
+      - cd ..
 
   - name: deploy-server
     image: docker:cli
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      ENV_FILE:
-        from_secret: env_file
-    when:
-      - path:
-          include: ["server/**"]
+      ENV_FILE_SERVER:
+        from_secret: env_file_server
     commands:
+      # Write env file
       - echo "$${ENV_FILE_SERVER}" > server/.env
+
+      # Only rebuild if there are changes
       - cd server
-      - docker compose pull
-      - docker compose build
+      - git fetch origin master
+      - if [ "$(git diff origin/master --name-only | grep '^')" != "" ]; then
+        docker compose pull;
+        docker compose build;
+        fi
+
+      # Bring up container
       - docker compose up -d
+      - cd ..
