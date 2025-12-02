@@ -1,19 +1,63 @@
 {
-	"root": false,
-	"extends": ["../../../biome.jsonc", "ultracite/react"],
-	"linter": {
-		"rules": {
-			"correctness": {
-				"noChildrenProp": "off"
-			}
-		}
-	},
-	"css": {
-		"parser": {
-			"tailwindDirectives": true
-		},
-		"formatter": {
-			"enabled": false
-		}
-	}
+  "root": false,
+  "extends": "//",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              { "type": true },
+              ":BLANK_LINE:",
+              ["react", "react/**", "react-*", "react-*/**"],
+              ":BLANK_LINE:",
+              [":BUN:", ":NODE:", ":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:"],
+              ":BLANK_LINE:",
+              [":ALIAS:", "@/**", "#/**", "~/**"],
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "nursery": {
+        "noShadow": "off",
+        "useSortedClasses": {
+          "level": "info",
+          "options": {
+            "attributes": ["classList"],
+            "functions": ["clsx", "cva"]
+          }
+        }
+      },
+      "style": {
+        "useImportType": {
+          "level": "error",
+          "options": {
+            "style": "separatedType"
+          }
+        },
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": {
+            "style": "interface"
+          }
+        }
+      }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    },
+    "formatter": {
+      "enabled": true
+    }
+  }
 }

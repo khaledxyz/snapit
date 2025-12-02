@@ -26,10 +26,11 @@
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "emmet.showExpandedAbbreviation": "never",
+  "editor.formatOnPaste": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
-  }
+    "source.fixAll.biome": "always",
+    "source.organizeImports.biome": "always"
+  },
+  "biome.lsp.bin": "biome",
+  "biome.enabled": true
 }
