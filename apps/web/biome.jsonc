@@ -1,0 +1,19 @@
+{
+	"root": false,
+	"extends": ["../../../biome.jsonc", "ultracite/react"],
+	"linter": {
+		"rules": {
+			"correctness": {
+				"noChildrenProp": "off"
+			}
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		},
+		"formatter": {
+			"enabled": false
+		}
+	}
+}

@@ -1,0 +1,52 @@
+{
+  "root": false,
+  "extends": "//",
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  },
+  "linter": {
+    "rules": {
+      "performance": {
+        "noNamespaceImport": "off",
+        "noBarrelFile": "off"
+      },
+      "style": {
+        "useImportType": "off"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              { "type": true },
+              ":BLANK_LINE:",
+
+              ["@nest/**", "@nestjs/**"],
+              ":BLANK_LINE:",
+
+              "@snapit/**",
+              ":BLANK_LINE:",
+
+              "@infra/**",
+              ":BLANK_LINE:",
+
+              "@modules/**",
+              ":BLANK_LINE:",
+
+              [":NODE:", ":BUN:", ":PACKAGE:", ":URL:", "@/**"],
+              ":BLANK_LINE:",
+
+              ":PATH:"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
