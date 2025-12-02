@@ -8,6 +8,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@base-ui-components/react": "1.0.0-beta.7",
 		"@tailwindcss/vite": "^4.1.17",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
