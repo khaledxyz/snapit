@@ -1,11 +1,11 @@
 import { Shortener } from "./shortener";
-import { UrlShowcase } from "./url-showcase";
+import { UrlsList } from "./urls-list";
 
 export function Landing() {
   return (
-    <main className="container space-y-20 py-12">
+    <main className="container relative space-y-20 border-x py-12">
       <div className="space-y-6 text-center">
-        <h1 className="font-black text-6xl leading-[1.1] tracking-tighter md:text-7xl lg:text-8xl">
+        <h1 className="font-black text-5xl leading-[1.1] tracking-tighter md:text-6xl lg:text-7xl">
           Long URLs?
           <br />
           Snap 'em short.
@@ -18,12 +18,7 @@ export function Landing() {
       </div>
 
       <Shortener />
-
-      <UrlShowcase />
-
-      <footer className="border-t py-8 text-center text-muted-foreground text-sm">
-        <p>© 2025 SnapIt. Built with speed in mind.</p>
-      </footer>
+      <UrlsList />
     </main>
   );
 }
