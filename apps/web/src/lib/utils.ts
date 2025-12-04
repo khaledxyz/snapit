@@ -34,3 +34,24 @@ export function timeAgo(date?: Date | string | number | null): string {
   // Older: show "Jan 15, 2023"
   return postDate.format("MMM D, YYYY");
 }
+
+const WHITESPACE_REGEX = /\s+/;
+export function getInitials(name: string, maxInitials = 2): string {
+  if (!name || typeof name !== "string") {
+    return "";
+  }
+
+  const words = name
+    .trim()
+    .split(WHITESPACE_REGEX)
+    .filter((word) => word.length > 0);
+
+  if (words.length === 0) {
+    return "";
+  }
+
+  return words
+    .slice(0, maxInitials)
+    .map((word) => word[0].toUpperCase())
+    .join("");
+}
