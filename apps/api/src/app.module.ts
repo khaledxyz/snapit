@@ -9,6 +9,8 @@ import { LoggerModule } from "@infra/logger/logger.module";
 import { MetricsModule } from "@infra/metrics/metrics.module";
 import { RateLimiterModule } from "@infra/rate-limiter/rate-limiter.module";
 
+import { AuthModule } from "@modules/auth/auth.module";
+
 @Module({
   imports: [
     // INFRA
@@ -18,6 +20,9 @@ import { RateLimiterModule } from "@infra/rate-limiter/rate-limiter.module";
     MetricsModule,
     LoggerModule,
     RateLimiterModule,
+
+    // MODULES
+    AuthModule,
   ],
   controllers: [],
   providers: [

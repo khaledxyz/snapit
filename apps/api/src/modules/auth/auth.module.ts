@@ -10,6 +10,8 @@ import { AuthModule as BetterAuthModule } from "@thallesp/nestjs-better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
+import * as schema from "./auth.schema";
+
 const SECONDS_IN_MINUTE = 60;
 const SESSION_FRESH_AGE_MINUTES = 5;
 
@@ -31,7 +33,7 @@ const SESSION_FRESH_AGE_MINUTES = 5;
               ?.map((origin) => origin.trim())
               ?.filter((origin) => origin.length > 0) || [],
 
-          database: drizzleAdapter(database, { provider: "pg" }),
+          database: drizzleAdapter(database, { provider: "pg", schema }),
 
           user: {
             deleteUser: {
