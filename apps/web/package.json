@@ -10,6 +10,7 @@
   "dependencies": {
     "@base-ui-components/react": "1.0.0-beta.7",
     "@fontsource-variable/inter": "^5.2.8",
+    "@snapit/sdk": "workspace:*",
     "@tailwindcss/vite": "^4.1.17",
     "better-auth": "^1.4.5",
     "class-variance-authority": "^0.7.1",

@@ -2,16 +2,18 @@
   "name": "snapit",
   "version": "0.0.1",
   "scripts": {
-    "dev": "pnpm --parallel dev",
+    "dev": "pnpm --parallel dev & pnpm dev:watch-sdk",
     "dev:web": "pnpm --filter web dev",
     "dev:api": "pnpm --filter api dev",
+    "dev:watch-sdk": "chokidar \"apps/api/openapi.json\" -c \"pnpm generate:sdk\"",
     "build": "pnpm --recursive build",
     "build:web": "pnpm --filter web build",
     "build:api": "pnpm --filter api build",
     "start:web": "pnpm --filter web start",
     "start:api": "pnpm --filter api prod",
     "lint:check": "ultracite check",
-    "lint:fix": "ultracite fix"
+    "lint:fix": "ultracite fix",
+    "generate:sdk": "pnpm --filter @snapit/sdk generate"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
     "@types/node": "^24.10.1",
+    "chokidar-cli": "^3.0.0",
     "lefthook": "^2.0.4",
     "ultracite": "6.3.8"
   }
