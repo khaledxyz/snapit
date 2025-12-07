@@ -2,7 +2,7 @@ import type { VariantProps } from "class-variance-authority";
 import type { buttonVariants } from "@/components/ui/button";
 
 import { Loader2Icon } from "lucide-react";
-import { useState } from "preact/hooks";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
