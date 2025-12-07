@@ -40,6 +40,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
       exceptionFactory:
         configService.getOrThrow("NODE_ENV") === "production"
           ? (_errors) => new BadRequestException("Bad Request")
