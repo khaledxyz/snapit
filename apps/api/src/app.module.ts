@@ -10,6 +10,7 @@ import { MetricsModule } from "@infra/metrics/metrics.module";
 import { RateLimiterModule } from "@infra/rate-limiter/rate-limiter.module";
 
 import { AuthModule } from "@modules/auth/auth.module";
+import { UrlsModule } from "@modules/urls/urls.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from "@modules/auth/auth.module";
 
     // MODULES
     AuthModule,
+    UrlsModule,
   ],
   controllers: [],
   providers: [
