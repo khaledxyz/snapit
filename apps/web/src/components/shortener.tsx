@@ -89,79 +89,6 @@ function calculateExpiryDate(expiresIn: string): string | undefined {
   return new Date(now.getTime() + duration).toISOString();
 }
 
-function OptionsBadges({ data }: { data: ShortenerFormData }) {
-  const badges = [
-    data.customCode && (
-      <Badge key="slug" variant="secondary">
-        Slug: {data.customCode}
-      </Badge>
-    ),
-    data.title && (
-      <Badge key="title" variant="secondary">
-        Title: {data.title}
-      </Badge>
-    ),
-    data.password && (
-      <Badge key="password" variant="secondary">
-        Password protected
-      </Badge>
-    ),
-    data.expiresIn !== "never" && (
-      <Badge key="expires" variant="secondary">
-        Expires: {expiryOptions.find((o) => o.value === data.expiresIn)?.label}
-      </Badge>
-    ),
-  ].filter(Boolean);
-
-  return badges.length > 0 ? (
-    <div className="flex flex-wrap gap-2">{badges}</div>
-  ) : null;
-}
-
-function FormField({
-  name,
-  label,
-  placeholder,
-  type = "text",
-  control,
-  autoComplete,
-}: {
-  name: keyof ShortenerFormData;
-  label: string;
-  placeholder: string;
-  type?: string;
-  control: ReturnType<typeof useForm<ShortenerFormData>>["control"];
-  autoComplete?: string;
-}) {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      render={({
-        field,
-        fieldState,
-      }: {
-        field: ControllerRenderProps<ShortenerFormData, typeof name>;
-        fieldState: FieldState;
-      }) => (
-        <Field invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
-          <Input
-            {...field}
-            autoComplete={autoComplete}
-            id={field.name}
-            placeholder={placeholder}
-            type={type}
-          />
-          <FieldError match={Boolean(fieldState.error)}>
-            {fieldState.error?.message}
-          </FieldError>
-        </Field>
-      )}
-    />
-  );
-}
-
 export function Shortener() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -361,5 +288,77 @@ export function Shortener() {
         ) : null}
       </CardPanel>
     </Card>
+  );
+}
+function OptionsBadges({ data }: { data: ShortenerFormData }) {
+  const badges = [
+    data.customCode && (
+      <Badge key="slug" variant="secondary">
+        Slug: {data.customCode}
+      </Badge>
+    ),
+    data.title && (
+      <Badge key="title" variant="secondary">
+        Title: {data.title}
+      </Badge>
+    ),
+    data.password && (
+      <Badge key="password" variant="secondary">
+        Password protected
+      </Badge>
+    ),
+    data.expiresIn !== "never" && (
+      <Badge key="expires" variant="secondary">
+        Expires: {expiryOptions.find((o) => o.value === data.expiresIn)?.label}
+      </Badge>
+    ),
+  ].filter(Boolean);
+
+  return badges.length > 0 ? (
+    <div className="flex flex-wrap gap-2">{badges}</div>
+  ) : null;
+}
+
+function FormField({
+  name,
+  label,
+  placeholder,
+  type = "text",
+  control,
+  autoComplete,
+}: {
+  name: keyof ShortenerFormData;
+  label: string;
+  placeholder: string;
+  type?: string;
+  control: ReturnType<typeof useForm<ShortenerFormData>>["control"];
+  autoComplete?: string;
+}) {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({
+        field,
+        fieldState,
+      }: {
+        field: ControllerRenderProps<ShortenerFormData, typeof name>;
+        fieldState: FieldState;
+      }) => (
+        <Field invalid={fieldState.invalid}>
+          <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+          <Input
+            {...field}
+            autoComplete={autoComplete}
+            id={field.name}
+            placeholder={placeholder}
+            type={type}
+          />
+          <FieldError match={Boolean(fieldState.error)}>
+            {fieldState.error?.message}
+          </FieldError>
+        </Field>
+      )}
+    />
   );
 }
