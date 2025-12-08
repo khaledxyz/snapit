@@ -14,7 +14,6 @@ import * as schema from "@infra/database/schema";
 import { CodeGeneratorService } from "@modules/code-generator/code-generator.service";
 import { PasswordService } from "@modules/password/password.service";
 
-import { UserSession } from "@thallesp/nestjs-better-auth";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
@@ -34,13 +33,10 @@ export class UrlsService {
   // Public API
   // ============================================================================
 
-  async create(
-    createUrlDto: CreateUrlDto,
-    session?: UserSession
-  ): Promise<UrlDto> {
+  async create(createUrlDto: CreateUrlDto, userId: string): Promise<UrlDto> {
     const { originalUrl, title, description } = createUrlDto;
 
-    const code = await this.resolveUrlCode(createUrlDto.customCode, session);
+    const code = await this.resolveUrlCode(createUrlDto.customCode, userId);
     const passwordHash = await this.hashPasswordIfProvided(
       createUrlDto.password
     );
@@ -56,7 +52,7 @@ export class UrlsService {
         description,
         passwordHash,
         expiresAt,
-        userId: session?.user.id,
+        userId,
       })
       .returning();
 
@@ -83,16 +79,25 @@ export class UrlsService {
     return url;
   }
 
+  async getUserUrls(userId: string): Promise<UrlDto[]> {
+    const urls = await this.db
+      .select()
+      .from(schema.url)
+      .where(eq(schema.url.userId, userId));
+
+    return urls;
+  }
+
   // ============================================================================
   // Create URL Helpers
   // ============================================================================
 
   private async resolveUrlCode(
     customCode: string | undefined,
-    session?: UserSession
+    userId: string
   ): Promise<string> {
     if (customCode) {
-      if (!session) {
+      if (!userId) {
         throw new UnauthorizedException("Custom codes require authentication");
       }
       if (!(await this.isCodeAvailable(customCode))) {
