@@ -1,9 +1,12 @@
-import { ShortUrl } from "@/components/short-url";
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <not needed> */
+import { useGetUserUrls } from "@snapit/sdk";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { generateFakeShortUrls } from "@/data/urls";
+
+import { ShortUrl, ShortUrlSkeleton } from "./short-url";
 
 export function UrlsList() {
-  const urls = generateFakeShortUrls(5);
+  const { data: urls = [], isLoading } = useGetUserUrls();
 
   return (
     <div className="relative h-96 w-full overflow-hidden rounded-2xl border border-dashed">
@@ -13,9 +16,9 @@ export function UrlsList() {
 
       <ScrollArea className="h-full w-full p-3">
         <div className="space-y-2">
-          {urls.map((url) => (
-            <ShortUrl key={url.id} url={url} />
-          ))}
+          {isLoading
+            ? Array.from({ length: 5 }, (_, i) => <ShortUrlSkeleton key={i} />)
+            : urls.map((url) => <ShortUrl key={url.id} url={url} />)}
         </div>
       </ScrollArea>
     </div>
