@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ApiError, urls } from "@snapit/sdk";
+import { ApiError, useCreateUrl } from "@snapit/sdk";
 import { BoltIcon } from "lucide-react";
 import { z } from "zod";
 
@@ -95,9 +95,9 @@ export function Shortener() {
   const { data: session } = authClient.useSession();
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [shortUrl, setShortUrl] = useState<string | null>(null);
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+
+  const createUrl = useCreateUrl();
 
   const form = useForm<ShortenerFormData>({
     mode: "onSubmit",
@@ -112,40 +112,21 @@ export function Shortener() {
   });
 
   const handleSubmit = async (data: ShortenerFormData) => {
-    setIsSubmitting(true);
-    setError(null);
-    setShortUrl(null);
+    setGeneratedCode(null);
 
-    try {
-      const result = await urls.create({
+    const result = await createUrl.mutateAsync({
+      data: {
         originalUrl: data.originalUrl,
         customCode: data.customCode || undefined,
         title: data.title || undefined,
         password: data.password || undefined,
         expiresAt: calculateExpiryDate(data.expiresIn),
-      });
+      },
+    });
 
-      const shortUrl = result.code
-        ? toggleHttps(
-            `${import.meta.env.VITE_CLIENT_URL}/${result.code}`,
-            "remove"
-          )
-        : null;
-
-      setShortUrl(shortUrl);
-      form.reset();
-      setShowAdvanced(false);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Failed to create shortened URL");
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    setGeneratedCode(result.code || null);
+    form.reset();
+    setShowAdvanced(false);
   };
 
   const formData = form.watch();
@@ -189,8 +170,8 @@ export function Shortener() {
               )}
             />
             <div className="flex gap-1 pt-6">
-              <Button disabled={isSubmitting} size="xl" type="submit">
-                {isSubmitting ? "Creating..." : "Snapit"}
+              <Button disabled={createUrl.isPending} size="xl" type="submit">
+                {createUrl.isPending ? "Creating..." : "Snapit"}
               </Button>
               <Button
                 onClick={() => setShowAdvanced(!showAdvanced)}
@@ -220,7 +201,7 @@ export function Shortener() {
                     <Input
                       {...field}
                       autoComplete="off"
-                      disabled={isSubmitting || !session}
+                      disabled={createUrl.isPending || !session}
                       id={field.name}
                       placeholder="my-custom-link"
                     />
@@ -246,7 +227,7 @@ export function Shortener() {
                     <Input
                       {...field}
                       autoComplete="off"
-                      disabled={isSubmitting}
+                      disabled={createUrl.isPending}
                       id={field.name}
                       placeholder="My Awesome Link"
                     />
@@ -273,7 +254,7 @@ export function Shortener() {
                       <Input
                         {...field}
                         autoComplete="new-password"
-                        disabled={isSubmitting}
+                        disabled={createUrl.isPending}
                         id={field.name}
                         placeholder="Optional password"
                         type="password"
@@ -329,24 +310,31 @@ export function Shortener() {
           {hasAdvancedOptions ? <OptionsBadges data={formData} /> : null}
         </form>
 
-        {error ? (
+        {createUrl.error ? (
           <Alert variant="error">
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>
+              {createUrl.error instanceof ApiError
+                ? createUrl.error.message
+                : "Failed to create shortened URL"}
+            </AlertDescription>
           </Alert>
         ) : null}
 
-        {shortUrl ? (
+        {generatedCode ? (
           <Alert variant="success">
-            <AlertTitle>Success! Your shortened URL:</AlertTitle>
+            <AlertTitle>Your shortened URL:</AlertTitle>
             <AlertDescription>
               <a
                 className="font-mono underline"
-                href={shortUrl}
+                href={`${import.meta.env.VITE_API_URL}/${generatedCode}`}
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                {shortUrl}
+                {toggleHttps(
+                  `${import.meta.env.VITE_API_URL}/${generatedCode}`,
+                  "remove"
+                )}
               </a>
             </AlertDescription>
           </Alert>
