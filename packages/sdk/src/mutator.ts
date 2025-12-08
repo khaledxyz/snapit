@@ -6,9 +6,30 @@ export const setBaseURL = (url: string) => {
 
 export const getBaseURL = () => globalBaseURL;
 
+export interface ApiErrorBody {
+  message?: string;
+  statusCode?: number;
+  error?: string;
+}
+
+export class ApiError extends Error {
+  status: number;
+  statusText: string;
+  body: ApiErrorBody | null;
+
+  constructor(status: number, statusText: string, body: ApiErrorBody | null) {
+    // Use API error message if available, otherwise construct generic message
+    super(body?.message || `API Error ${status}: ${statusText}`);
+    this.name = "ApiError";
+    this.status = status;
+    this.statusText = statusText;
+    this.body = body;
+  }
+}
+
 export const customFetch = async <T>(
   url: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> => {
   const baseURL = globalBaseURL;
   const fullURL = url.startsWith("http") ? url : `${baseURL}${url}`;
@@ -23,9 +44,11 @@ export const customFetch = async <T>(
       ? null
       : await response.json();
 
-  return {
-    data: body,
-    status: response.status,
-    headers: response.headers,
-  } as T;
+  // Throw error for non-2xx responses
+  if (!response.ok) {
+    throw new ApiError(response.status, response.statusText, body);
+  }
+
+  // Return the body directly, not wrapped
+  return body as T;
 };
