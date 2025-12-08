@@ -1,5 +1,6 @@
-import type { ShortenedUrl } from "@/data/urls";
+import type { UrlDto } from "@snapit/sdk";
 
+import { useDeleteUrl } from "@snapit/sdk";
 import { ExternalLink, Link2, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,19 +15,30 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
-import { timeAgo } from "@/lib/utils";
+import { usePrompt } from "@/hooks/use-prompt";
+import { timeAgo, toggleHttps } from "@/lib/utils";
 
 import { Badge } from "./ui/badge";
 
-interface Props {
-  url: ShortenedUrl;
-}
-const PROTOCOL_REGEX = /https?:\/\//g;
-const TRAILING_SLASH_REGEX = /\/$/;
+export function ShortUrl({ url }: { url: UrlDto }) {
+  const deleteUrl = useDeleteUrl();
 
-export function ShortUrl({ url }: Props) {
-  const shortUrl = `${import.meta.env.VITE_CLIENT_URL}/${url.shortCode}`;
+  const prompt = usePrompt();
+  const shortUrl = `${import.meta.env.VITE_API_URL}/${url.code}`;
 
+  async function handleDeleteUrl() {
+    const confirm = await prompt({
+      title: "Delete URL?",
+      description:
+        "Are you sure you want to delete this short URL? This action cannot be undone and all associated data will be permanently removed.",
+    });
+
+    if (!confirm) {
+      return;
+    }
+
+    deleteUrl.mutate({ code: url.code });
+  }
   return (
     <Item className="w-full" variant="outline">
       <ItemMedia variant="icon">
@@ -36,14 +48,12 @@ export function ShortUrl({ url }: Props) {
       <ItemContent>
         <ItemTitle>
           <a className="underline" href={shortUrl}>
-            {shortUrl.replace(/https?:\/\//g, " ")}
+            {toggleHttps(shortUrl, "remove")}
           </a>
         </ItemTitle>
         <ItemDescription className="line-clamp-1 max-w-52 text-ellipsis">
-          <a className="underline" href={url.longUrl}>
-            {url.longUrl
-              .replace(PROTOCOL_REGEX, " ")
-              .replace(TRAILING_SLASH_REGEX, "")}
+          <a className="underline" href={url.originalUrl}>
+            {toggleHttps(url.originalUrl, "remove")}
           </a>
         </ItemDescription>
       </ItemContent>
@@ -53,14 +63,18 @@ export function ShortUrl({ url }: Props) {
         <Button size="icon" variant="outline">
           <ExternalLink />
         </Button>
-        <Button size="icon" variant="destructive-outline">
+        <Button
+          onClick={handleDeleteUrl}
+          size="icon"
+          variant="destructive-outline"
+        >
           <Trash2 />
         </Button>
       </ItemActions>
 
       <ItemFooter className="justify-start gap-1">
         <Badge variant="outline">Created {timeAgo(url.createdAt)}</Badge>
-        <Badge variant="outline">{url.clickCount} clicks</Badge>
+        <Badge variant="outline">{"url.clickCount"} clicks</Badge>
       </ItemFooter>
     </Item>
   );
