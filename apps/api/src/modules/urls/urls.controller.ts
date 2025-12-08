@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -32,6 +33,12 @@ export class UrlsController {
     @Body() createUrlDto: CreateUrlDto,
     @Session() session: UserSession
   ): Promise<UrlDto> {
-    return await this.urlsService.create(createUrlDto, session);
+    return await this.urlsService.create(createUrlDto, session.user.id);
+  }
+
+  @Get("/me")
+  @HttpCode(HttpStatus.OK)
+  async getUserUrls(@Session() session: UserSession): Promise<UrlDto[]> {
+    return await this.urlsService.getUserUrls(session.user.id);
   }
 }
