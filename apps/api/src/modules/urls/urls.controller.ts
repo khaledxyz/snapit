@@ -28,10 +28,10 @@ export class UrlsController {
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
   @OptionalAuth()
-  async createUrl(
+  async create(
     @Body() createUrlDto: CreateUrlDto,
     @Session() session: UserSession
   ): Promise<UrlDto> {
-    return await this.urlsService.createUrl(createUrlDto, session);
+    return await this.urlsService.create(createUrlDto, session);
   }
 }

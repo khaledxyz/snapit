@@ -40,71 +40,60 @@ export interface UrlDto {
 /**
  * @nullable
  */
-export type HealthControllerCheckLiveness200Info = {
-  [key: string]: {
-    status: string;
-    [key: string]: unknown;
-  };
-} | null;
+export type CheckLiveness200Info = {[key: string]: {
+  status: string;
+  [key: string]: unknown;
+ }} | null;
 
 /**
  * @nullable
  */
-export type HealthControllerCheckLiveness200Error = {
-  [key: string]: {
-    status: string;
-    [key: string]: unknown;
-  };
-} | null;
+export type CheckLiveness200Error = {[key: string]: {
+  status: string;
+  [key: string]: unknown;
+ }} | null;
 
-export type HealthControllerCheckLiveness200Details = {
-  [key: string]: {
-    status: string;
-    [key: string]: unknown;
-  };
-};
+export type CheckLiveness200Details = {[key: string]: {
+  status: string;
+  [key: string]: unknown;
+ }};
 
-export type HealthControllerCheckLiveness200 = {
+export type CheckLiveness200 = {
   status?: string;
   /** @nullable */
-  info?: HealthControllerCheckLiveness200Info;
+  info?: CheckLiveness200Info;
   /** @nullable */
-  error?: HealthControllerCheckLiveness200Error;
-  details?: HealthControllerCheckLiveness200Details;
+  error?: CheckLiveness200Error;
+  details?: CheckLiveness200Details;
 };
 
 /**
  * @nullable
  */
-export type HealthControllerCheckLiveness503Info = {
-  [key: string]: {
-    status: string;
-    [key: string]: unknown;
-  };
-} | null;
+export type CheckLiveness503Info = {[key: string]: {
+  status: string;
+  [key: string]: unknown;
+ }} | null;
 
 /**
  * @nullable
  */
-export type HealthControllerCheckLiveness503Error = {
-  [key: string]: {
-    status: string;
-    [key: string]: unknown;
-  };
-} | null;
+export type CheckLiveness503Error = {[key: string]: {
+  status: string;
+  [key: string]: unknown;
+ }} | null;
 
-export type HealthControllerCheckLiveness503Details = {
-  [key: string]: {
-    status: string;
-    [key: string]: unknown;
-  };
-};
+export type CheckLiveness503Details = {[key: string]: {
+  status: string;
+  [key: string]: unknown;
+ }};
 
-export type HealthControllerCheckLiveness503 = {
+export type CheckLiveness503 = {
   status?: string;
   /** @nullable */
-  info?: HealthControllerCheckLiveness503Info;
+  info?: CheckLiveness503Info;
   /** @nullable */
-  error?: HealthControllerCheckLiveness503Error;
-  details?: HealthControllerCheckLiveness503Details;
+  error?: CheckLiveness503Error;
+  details?: CheckLiveness503Details;
 };
+

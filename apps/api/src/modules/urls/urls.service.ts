@@ -34,7 +34,7 @@ export class UrlsService {
   // Public API
   // ============================================================================
 
-  async createUrl(
+  async create(
     createUrlDto: CreateUrlDto,
     session?: UserSession
   ): Promise<UrlDto> {

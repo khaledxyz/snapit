@@ -1,0 +1,3 @@
+src/**/*.ts
+!src/mutator.ts
+!src/index.ts

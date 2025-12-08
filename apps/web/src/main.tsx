@@ -1,18 +1,17 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: <not needed> */
 
-import { OpenAPI } from "@snapit/sdk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+
+import { setBaseURL } from "@snapit/sdk";
 
 import { App } from "./app";
 import "./index.css";
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const apiPrefix = import.meta.env.VITE_API_PREFIX || "/api";
-OpenAPI.BASE = `${apiUrl}${apiPrefix}`;
+setBaseURL(import.meta.env.VITE_API_URL || "http://localhost:5000");
 
 createRoot(document.getElementById("app")!).render(
-    <StrictMode>
-        <App />
-    </StrictMode>
+  <StrictMode>
+    <App />
+  </StrictMode>
 );
