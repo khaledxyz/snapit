@@ -26,9 +26,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -43,9 +41,7 @@
                       "example": {},
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -64,9 +60,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -100,9 +94,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -122,9 +114,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -147,9 +137,7 @@
                       },
                       "additionalProperties": {
                         "type": "object",
-                        "required": [
-                          "status"
-                        ],
+                        "required": ["status"],
                         "properties": {
                           "status": {
                             "type": "string"
@@ -164,9 +152,7 @@
             }
           }
         },
-        "tags": [
-          "Health"
-        ]
+        "tags": ["Health"]
       }
     },
     "/api/metrics": {
@@ -178,9 +164,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Prometheus"
-        ]
+        "tags": ["Prometheus"]
       }
     },
     "/api/urls": {
@@ -209,9 +193,7 @@
             }
           }
         },
-        "tags": [
-          "Urls"
-        ]
+        "tags": ["Urls"]
       }
     }
   },
@@ -261,9 +243,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "originalUrl"
-        ]
+        "required": ["originalUrl"]
       },
       "UrlDto": {
         "type": "object",
