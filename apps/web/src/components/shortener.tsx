@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { authClient } from "@/lib/auth-client";
+import { toggleHttps } from "@/lib/utils";
 
 const shortenerSchema = z.object({
   originalUrl: z.url("Invalid URL").min(1, "URL is required"),
@@ -124,7 +125,14 @@ export function Shortener() {
         expiresAt: calculateExpiryDate(data.expiresIn),
       });
 
-      setShortUrl(result.code ?? null);
+      const shortUrl = result.code
+        ? toggleHttps(
+            `${import.meta.env.VITE_CLIENT_URL}/${result.code}`,
+            "remove"
+          )
+        : null;
+
+      setShortUrl(shortUrl);
       form.reset();
       setShowAdvanced(false);
     } catch (err) {
