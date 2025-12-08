@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { authClient } from "@/lib/auth-client";
 
 const shortenerSchema = z.object({
   originalUrl: z.url("Invalid URL").min(1, "URL is required"),
@@ -90,6 +91,8 @@ function calculateExpiryDate(expiresIn: string): string | undefined {
 }
 
 export function Shortener() {
+  const { data: session } = authClient.useSession();
+
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -194,30 +197,84 @@ export function Shortener() {
 
           {showAdvanced ? (
             <div className="space-y-4">
-              <FormField
-                autoComplete="off"
+              <Controller
                 control={form.control}
-                label="Custom Slug"
                 name="customCode"
-                placeholder="my-custom-link"
+                render={({
+                  field,
+                  fieldState,
+                }: {
+                  field: ControllerRenderProps<ShortenerFormData, "customCode">;
+                  fieldState: FieldState;
+                }) => (
+                  <Field invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Custom Slug</FieldLabel>
+                    <Input
+                      {...field}
+                      autoComplete="off"
+                      disabled={isSubmitting || !session}
+                      id={field.name}
+                      placeholder="my-custom-link"
+                    />
+                    <FieldError match={Boolean(fieldState.error)}>
+                      {fieldState.error?.message}
+                    </FieldError>
+                  </Field>
+                )}
               />
 
-              <FormField
-                autoComplete="off"
+              <Controller
                 control={form.control}
-                label="Title"
                 name="title"
-                placeholder="My Awesome Link"
+                render={({
+                  field,
+                  fieldState,
+                }: {
+                  field: ControllerRenderProps<ShortenerFormData, "title">;
+                  fieldState: FieldState;
+                }) => (
+                  <Field invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+                    <Input
+                      {...field}
+                      autoComplete="off"
+                      disabled={isSubmitting}
+                      id={field.name}
+                      placeholder="My Awesome Link"
+                    />
+                    <FieldError match={Boolean(fieldState.error)}>
+                      {fieldState.error?.message}
+                    </FieldError>
+                  </Field>
+                )}
               />
 
               <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  autoComplete="new-password"
+                <Controller
                   control={form.control}
-                  label="Password"
                   name="password"
-                  placeholder="Optional password"
-                  type="password"
+                  render={({
+                    field,
+                    fieldState,
+                  }: {
+                    field: ControllerRenderProps<ShortenerFormData, "password">;
+                    fieldState: FieldState;
+                  }) => (
+                    <Field invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <Input
+                        {...field}
+                        autoComplete="new-password"
+                        disabled={isSubmitting}
+                        id={field.name}
+                        placeholder="Optional password"
+                        type="password"
+                      />
+                      <FieldError match={Boolean(fieldState.error)}>
+                        {fieldState.error?.message}
+                      </FieldError>
+                    </Field>
+                  )}
                 />
 
                 <Controller
@@ -317,48 +374,4 @@ function OptionsBadges({ data }: { data: ShortenerFormData }) {
   return badges.length > 0 ? (
     <div className="flex flex-wrap gap-2">{badges}</div>
   ) : null;
-}
-
-function FormField({
-  name,
-  label,
-  placeholder,
-  type = "text",
-  control,
-  autoComplete,
-}: {
-  name: keyof ShortenerFormData;
-  label: string;
-  placeholder: string;
-  type?: string;
-  control: ReturnType<typeof useForm<ShortenerFormData>>["control"];
-  autoComplete?: string;
-}) {
-  return (
-    <Controller
-      control={control}
-      name={name}
-      render={({
-        field,
-        fieldState,
-      }: {
-        field: ControllerRenderProps<ShortenerFormData, typeof name>;
-        fieldState: FieldState;
-      }) => (
-        <Field invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
-          <Input
-            {...field}
-            autoComplete={autoComplete}
-            id={field.name}
-            placeholder={placeholder}
-            type={type}
-          />
-          <FieldError match={Boolean(fieldState.error)}>
-            {fieldState.error?.message}
-          </FieldError>
-        </Field>
-      )}
-    />
-  );
 }
