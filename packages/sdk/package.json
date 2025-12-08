@@ -1,0 +1,41 @@
+{
+  "name": "@snapit/sdk",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/client/index.ts",
+  "types": "./src/client/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/client/index.ts",
+      "types": "./src/client/index.ts"
+    },
+    "./client.gen": {
+      "import": "./src/client/client.gen.ts",
+      "types": "./src/client/client.gen.ts"
+    },
+    "./client/*": {
+      "import": "./src/client/client/*.ts",
+      "types": "./src/client/client/*.ts"
+    },
+    "./types.gen": {
+      "import": "./src/client/types.gen.ts",
+      "types": "./src/client/types.gen.ts"
+    },
+    "./sdk.gen": {
+      "import": "./src/client/sdk.gen.ts",
+      "types": "./src/client/sdk.gen.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "generate": "openapi-ts",
+    "prepare": "pnpm generate",
+    "prepublishOnly": "pnpm generate"
+  },
+  "packageManager": "pnpm@10.24.0",
+  "devDependencies": {
+    "@hey-api/openapi-ts": "0.88.1"
+  }
+}
