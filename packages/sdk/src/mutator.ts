@@ -34,7 +34,10 @@ export const customFetch = async <T>(
   const baseURL = globalBaseURL;
   const fullURL = url.startsWith("http") ? url : `${baseURL}${url}`;
 
-  const response = await fetch(fullURL, options);
+  const response = await fetch(fullURL, {
+    ...options,
+    credentials: "include",
+  });
 
   const contentType = response.headers.get("content-type");
   const isJson = contentType?.includes("application/json");
