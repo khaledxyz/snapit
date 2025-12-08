@@ -10,6 +10,7 @@
   "dependencies": {
     "@base-ui-components/react": "1.0.0-beta.7",
     "@fontsource-variable/inter": "^5.2.8",
+    "@hookform/resolvers": "^5.2.2",
     "@snapit/sdk": "workspace:*",
     "@tailwindcss/vite": "^4.1.17",
     "better-auth": "^1.4.5",
@@ -20,9 +21,11 @@
     "pnpm": "^10.24.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "react-hook-form": "^7.68.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17",
-    "usehooks-ts": "^3.1.1"
+    "usehooks-ts": "^3.1.1",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
