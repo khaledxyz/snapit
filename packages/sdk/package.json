@@ -8,10 +8,11 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "generate": "openapi --input ../../apps/api/openapi.json --output ./src --client fetch"
+    "generate": "orval"
   },
   "devDependencies": {
-    "openapi-typescript-codegen": "^0.29.0",
+    "orval": "^7.17.0",
     "typescript": "~5.9.3"
-  }
+  },
+  "packageManager": "pnpm@10.24.0"
 }
