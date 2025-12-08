@@ -2,7 +2,7 @@ import { Exclude } from "class-transformer";
 
 export class UrlDto {
   id: string;
-  code?: string;
+  code: string;
   originalUrl: string;
   title?: string;
   description?: string;
