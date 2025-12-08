@@ -5,6 +5,7 @@ import {
   ConflictException,
   Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
 
@@ -86,6 +87,16 @@ export class UrlsService {
       .where(eq(schema.url.userId, userId));
 
     return urls;
+  }
+
+  async deleteUrl(code: string, userId: string): Promise<void> {
+    const url = await this.findUrlByCode(code);
+
+    if (!url || url.userId !== userId) {
+      throw new NotFoundException("URL not found");
+    }
+
+    await this.db.delete(schema.url).where(eq(schema.url.code, code));
   }
 
   // ============================================================================

@@ -2,9 +2,11 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   SerializeOptions,
   UseInterceptors,
@@ -40,5 +42,14 @@ export class UrlsController {
   @HttpCode(HttpStatus.OK)
   async getUserUrls(@Session() session: UserSession): Promise<UrlDto[]> {
     return await this.urlsService.getUserUrls(session.user.id);
+  }
+
+  @Delete("/:code")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(
+    @Param("code") code: string,
+    @Session() session: UserSession
+  ): Promise<void> {
+    await this.urlsService.deleteUrl(code, session.user.id);
   }
 }
