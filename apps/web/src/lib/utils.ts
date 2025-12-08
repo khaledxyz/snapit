@@ -55,3 +55,26 @@ export function getInitials(name: string, maxInitials = 2): string {
     .map((word) => word[0].toUpperCase())
     .join("");
 }
+
+// Top-level regex constants
+const HTTP_REGEX = /^https?:\/\//i;
+export function toggleHttps(url: string, action: "add" | "remove"): string {
+  if (!url) {
+    return url;
+  }
+
+  const trimmedUrl = url.trim();
+
+  if (action === "add") {
+    if (!HTTP_REGEX.test(trimmedUrl)) {
+      return `https://${trimmedUrl}`;
+    }
+    return trimmedUrl;
+  }
+
+  if (action === "remove") {
+    return trimmedUrl.replace(HTTP_REGEX, "");
+  }
+
+  return trimmedUrl;
+}
