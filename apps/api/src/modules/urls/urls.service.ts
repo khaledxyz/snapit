@@ -15,7 +15,7 @@ import * as schema from "@infra/database/schema";
 import { CodeGeneratorService } from "@modules/code-generator/code-generator.service";
 import { PasswordService } from "@modules/password/password.service";
 
-import { eq } from "drizzle-orm";
+import { and, eq, gt, isNull, or } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 import { CreateUrlDto } from "./dto/create-url.dto";
@@ -34,7 +34,7 @@ export class UrlsService {
   // Public API
   // ============================================================================
 
-  async create(createUrlDto: CreateUrlDto, userId: string): Promise<UrlDto> {
+  async createUrl(createUrlDto: CreateUrlDto, userId: string): Promise<UrlDto> {
     const { originalUrl, title, description } = createUrlDto;
 
     const code = await this.resolveUrlCode(createUrlDto.customCode, userId);
@@ -81,12 +81,15 @@ export class UrlsService {
   }
 
   async getUserUrls(userId: string): Promise<UrlDto[]> {
-    const urls = await this.db
+    return this.db
       .select()
       .from(schema.url)
-      .where(eq(schema.url.userId, userId));
-
-    return urls;
+      .where(
+        and(
+          eq(schema.url.userId, userId),
+          or(isNull(schema.url.expiresAt), gt(schema.url.expiresAt, new Date()))
+        )
+      );
   }
 
   async deleteUrl(code: string, userId: string): Promise<void> {

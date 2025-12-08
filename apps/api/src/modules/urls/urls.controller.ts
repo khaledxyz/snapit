@@ -31,11 +31,11 @@ export class UrlsController {
   @Post("/")
   @HttpCode(HttpStatus.CREATED)
   @OptionalAuth()
-  async create(
+  async createUrl(
     @Body() createUrlDto: CreateUrlDto,
     @Session() session: UserSession
   ): Promise<UrlDto> {
-    return await this.urlsService.create(createUrlDto, session.user.id);
+    return await this.urlsService.createUrl(createUrlDto, session.user.id);
   }
 
   @Get("/me")
@@ -46,7 +46,7 @@ export class UrlsController {
 
   @Delete("/:code")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(
+  async deleteUrl(
     @Param("code") code: string,
     @Session() session: UserSession
   ): Promise<void> {
