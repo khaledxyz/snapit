@@ -1,0 +1,67 @@
+services:
+  # ================================
+  # PostgreSQL Database
+  # ================================
+  snapit-db:
+    image: postgres:16-alpine
+    container_name: snapit-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - api-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ================================
+  # NestJS API
+  # ================================
+  snapit-api:
+    image: ${REGISTRY_URL}/snapit-api:${API_VERSION:-latest}
+    container_name: snapit-api
+    restart: unless-stopped
+    depends_on:
+      snapit-db:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - api-network
+      - proxy-network
+
+  # ================================
+  # React Web App
+  # ================================
+  snapit-web:
+    image: ${REGISTRY_URL}/snapit-web:${WEB_VERSION:-latest}
+    container_name: snapit-web
+    restart: unless-stopped
+    networks:
+      - proxy-network
+
+# ================================
+# Networks
+# ================================
+networks:
+  proxy-network:
+    external: true
+    name: ${PROXY_NETWORK}
+
+  api-network:
+    internal: true
+    driver: bridge
+
+# ================================
+# Volumes
+# ================================
+volumes:
+  postgres-data:
+    driver: local
