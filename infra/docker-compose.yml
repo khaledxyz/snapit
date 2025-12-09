@@ -1,0 +1,59 @@
+services:
+  # ================================
+  # Snapit API - Traefik Routing
+  # ================================
+  snapit-api:
+    image: ${REGISTRY_URL}/snapit-api:${API_VERSION:-latest}
+    container_name: snapit-api
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP -> HTTPS redirect
+      - "traefik.http.routers.snapit-api-http.entrypoints=http"
+      - "traefik.http.routers.snapit-api-http.rule=Host(`${API_HOST}`)"
+      - "traefik.http.routers.snapit-api-http.middlewares=https-redirect@file"
+
+      # HTTPS router
+      - "traefik.http.routers.snapit-api-secure.entrypoints=https"
+      - "traefik.http.routers.snapit-api-secure.rule=Host(`${API_HOST}`)"
+      - "traefik.http.routers.snapit-api-secure.tls=true"
+      - "traefik.http.routers.snapit-api-secure.tls.certresolver=le"
+      - "traefik.http.routers.snapit-api-secure.tls.options=modern-tls@file"
+
+      # Service configuration
+      - "traefik.http.services.snapit-api.loadbalancer.server.port=5000"
+    networks:
+      - proxy-network
+
+  # ================================
+  # Snapit Web - Traefik Routing
+  # ================================
+  snapit-web:
+    image: ${REGISTRY_URL}/snapit-web:${WEB_VERSION:-latest}
+    container_name: snapit-web
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP -> HTTPS redirect
+      - "traefik.http.routers.snapit-web-http.entrypoints=http"
+      - "traefik.http.routers.snapit-web-http.rule=Host(`${WEB_HOST}`)"
+      - "traefik.http.routers.snapit-web-http.middlewares=https-redirect@file"
+
+      # HTTPS router
+      - "traefik.http.routers.snapit-web-secure.entrypoints=https"
+      - "traefik.http.routers.snapit-web-secure.rule=Host(`${WEB_HOST}`)"
+      - "traefik.http.routers.snapit-web-secure.tls=true"
+      - "traefik.http.routers.snapit-web-secure.tls.certresolver=le"
+      - "traefik.http.routers.snapit-web-secure.tls.options=modern-tls@file"
+
+      # Service configuration
+      - "traefik.http.services.snapit-web.loadbalancer.server.port=80"
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    external: true
+    name: ${PROXY_NETWORK}
