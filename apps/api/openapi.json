@@ -10,9 +10,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Prometheus"
-        ]
+        "tags": ["Prometheus"]
       }
     },
     "/api/urls": {
@@ -41,9 +39,7 @@
             }
           }
         },
-        "tags": [
-          "Urls"
-        ]
+        "tags": ["Urls"]
       }
     },
     "/api/urls/me": {
@@ -65,9 +61,7 @@
             }
           }
         },
-        "tags": [
-          "Urls"
-        ]
+        "tags": ["Urls"]
       }
     },
     "/api/urls/{code}": {
@@ -88,9 +82,7 @@
             "description": ""
           }
         },
-        "tags": [
-          "Urls"
-        ]
+        "tags": ["Urls"]
       }
     }
   },
@@ -140,9 +132,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "originalUrl"
-        ]
+        "required": ["originalUrl"]
       },
       "UrlDto": {
         "type": "object",

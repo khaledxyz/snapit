@@ -1,4 +1,6 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
+
+import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
@@ -7,7 +9,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
     <div
       className={cn(
         "flex min-w-0 flex-1 flex-col items-center justify-center gap-6 text-balance rounded-xl border-dashed p-6 text-center md:p-12",
-        className,
+        className
       )}
       data-slot="empty"
       {...props}
@@ -20,7 +22,7 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       className={cn(
         "flex max-w-sm flex-col items-center text-center",
-        className,
+        className
       )}
       data-slot="empty-header"
       {...props}
@@ -40,7 +42,7 @@ const emptyMediaVariants = cva(
         icon: "relative flex size-9 shrink-0 items-center justify-center rounded-md border bg-card text-foreground shadow-black/5 shadow-sm before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/8%)] [&_svg:not([class*='size-'])]:size-4.5",
       },
     },
-  },
+  }
 );
 
 function EmptyMedia({
@@ -61,14 +63,14 @@ function EmptyMedia({
             aria-hidden="true"
             className={cn(
               emptyMediaVariants({ className, variant }),
-              "-translate-x-0.5 -rotate-10 pointer-events-none absolute bottom-px origin-bottom-left scale-84 shadow-none",
+              "-translate-x-0.5 -rotate-10 pointer-events-none absolute bottom-px origin-bottom-left scale-84 shadow-none"
             )}
           />
           <div
             aria-hidden="true"
             className={cn(
               emptyMediaVariants({ className, variant }),
-              "pointer-events-none absolute bottom-px origin-bottom-right translate-x-0.5 rotate-10 scale-84 shadow-none",
+              "pointer-events-none absolute bottom-px origin-bottom-right translate-x-0.5 rotate-10 scale-84 shadow-none"
             )}
           />
         </>
@@ -96,7 +98,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
     <div
       className={cn(
         "text-muted-foreground text-sm/relaxed [&>a:hover]:text-primary [&>a]:underline [&>a]:underline-offset-4 [[data-slot=empty-title]+&]:mt-1",
-        className,
+        className
       )}
       data-slot="empty-description"
       {...props}
@@ -109,7 +111,7 @@ function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
     <div
       className={cn(
         "flex w-full min-w-0 max-w-sm flex-col items-center gap-4 text-balance text-sm",
-        className,
+        className
       )}
       data-slot="empty-content"
       {...props}

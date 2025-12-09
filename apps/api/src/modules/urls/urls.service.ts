@@ -81,7 +81,7 @@ export class UrlsService {
   }
 
   async getUserUrls(userId: string): Promise<UrlDto[]> {
-    return this.db
+    return await this.db
       .select()
       .from(schema.url)
       .where(

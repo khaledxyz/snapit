@@ -1,5 +1,5 @@
-"use client";
-
+/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <not needed> */
+/** biome-ignore-all lint/style/noNestedTernary: <not needed> */
 import { Toast } from "@base-ui-components/react/toast";
 import {
   CircleAlertIcon,
@@ -129,14 +129,14 @@ function Toasts({ position = "bottom-right" }: { position: ToastPosition }) {
             >
               <Toast.Content className="pointer-events-auto flex items-center justify-between gap-1.5 overflow-hidden px-3.5 py-3 text-sm transition-opacity duration-250 data-behind:pointer-events-none data-behind:opacity-0 data-expanded:opacity-100">
                 <div className="flex gap-2">
-                  {Icon && (
+                  {Icon ? (
                     <div
                       className="[&>svg]:h-lh [&>svg]:w-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
                       data-slot="toast-icon"
                     >
                       <Icon className="in-data-[type=loading]:animate-spin in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning in-data-[type=loading]:opacity-72" />
                     </div>
-                  )}
+                  ) : null}
 
                   <div className="flex flex-col gap-0.5">
                     <Toast.Title
@@ -149,14 +149,14 @@ function Toasts({ position = "bottom-right" }: { position: ToastPosition }) {
                     />
                   </div>
                 </div>
-                {toast.actionProps && (
+                {toast.actionProps ? (
                   <Toast.Action
                     className={buttonVariants({ size: "xs" })}
                     data-slot="toast-action"
                   >
                     {toast.actionProps.children}
                   </Toast.Action>
-                )}
+                ) : null}
               </Toast.Content>
             </Toast.Root>
           );
@@ -221,14 +221,14 @@ function AnchoredToasts() {
                 ) : (
                   <Toast.Content className="pointer-events-auto flex items-center justify-between gap-1.5 overflow-hidden px-3.5 py-3 text-sm">
                     <div className="flex gap-2">
-                      {Icon && (
+                      {Icon ? (
                         <div
                           className="[&>svg]:h-lh [&>svg]:w-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
                           data-slot="toast-icon"
                         >
                           <Icon className="in-data-[type=loading]:animate-spin in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=success]:text-success in-data-[type=warning]:text-warning in-data-[type=loading]:opacity-72" />
                         </div>
-                      )}
+                      ) : null}
 
                       <div className="flex flex-col gap-0.5">
                         <Toast.Title
@@ -241,14 +241,14 @@ function AnchoredToasts() {
                         />
                       </div>
                     </div>
-                    {toast.actionProps && (
+                    {toast.actionProps ? (
                       <Toast.Action
                         className={buttonVariants({ size: "xs" })}
                         data-slot="toast-action"
                       >
                         {toast.actionProps.children}
                       </Toast.Action>
-                    )}
+                    ) : null}
                   </Toast.Content>
                 )}
               </Toast.Root>
@@ -261,9 +261,9 @@ function AnchoredToasts() {
 }
 
 export {
+  anchoredToastManager,
+  AnchoredToastProvider,
+  toastManager,
   ToastProvider,
   type ToastPosition,
-  toastManager,
-  AnchoredToastProvider,
-  anchoredToastManager,
 };
