@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ApiError, useCreateUrl } from "@snapit/sdk";
 import { BoltIcon } from "lucide-react";
 import { z } from "zod";
 
@@ -21,6 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
+import { useCreateUrl } from "@/hooks/urls";
 import { authClient } from "@/lib/auth-client";
 import { toggleHttps } from "@/lib/utils";
 
@@ -114,19 +115,23 @@ export function Shortener() {
   const handleSubmit = async (data: ShortenerFormData) => {
     setGeneratedCode(null);
 
-    const result = await createUrl.mutateAsync({
-      data: {
+    try {
+      const result = await createUrl.mutateAsync({
         originalUrl: data.originalUrl,
         customCode: data.customCode || undefined,
         title: data.title || undefined,
         password: data.password || undefined,
         expiresAt: calculateExpiryDate(data.expiresIn),
-      },
-    });
+      });
 
-    setGeneratedCode(result.code || null);
-    form.reset();
-    setShowAdvanced(false);
+      setGeneratedCode(result.code || null);
+      form.reset();
+      setShowAdvanced(false);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      }
+    }
   };
 
   const formData = form.watch();
@@ -171,7 +176,8 @@ export function Shortener() {
             />
             <div className="flex gap-1 pt-6">
               <Button disabled={createUrl.isPending} size="xl" type="submit">
-                {createUrl.isPending ? "Creating..." : "Snapit"}
+                {createUrl.isPending ? <Spinner /> : null}
+                Snapit
               </Button>
               <Button
                 onClick={() => setShowAdvanced(!showAdvanced)}
@@ -314,7 +320,7 @@ export function Shortener() {
           <Alert variant="error">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
-              {createUrl.error instanceof ApiError
+              {createUrl.error instanceof Error
                 ? createUrl.error.message
                 : "Failed to create shortened URL"}
             </AlertDescription>
@@ -343,6 +349,7 @@ export function Shortener() {
     </Card>
   );
 }
+
 function OptionsBadges({ data }: { data: ShortenerFormData }) {
   const badges = [
     data.customCode && (
