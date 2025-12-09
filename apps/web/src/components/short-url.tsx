@@ -1,8 +1,8 @@
 import type { UrlDto } from "@snapit/sdk";
 
-import { useDeleteUrl } from "@snapit/sdk";
 import { ExternalLink, Link2, Trash2 } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copy-button";
 import {
@@ -15,14 +15,13 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
+import { useDeleteUrl } from "@/hooks/urls";
 import { usePrompt } from "@/hooks/use-prompt";
 import { timeAgo, toggleHttps } from "@/lib/utils";
 
-import { Badge } from "./ui/badge";
-
 export function ShortUrl({ url }: { url: UrlDto }) {
   const deleteUrl = useDeleteUrl();
-
   const prompt = usePrompt();
   const shortUrl = `${import.meta.env.VITE_API_URL}/${url.code}`;
 
@@ -37,7 +36,7 @@ export function ShortUrl({ url }: { url: UrlDto }) {
       return;
     }
 
-    deleteUrl.mutate({ code: url.code });
+    await deleteUrl.mutateAsync(url.code);
   }
   return (
     <Item className="w-full" variant="outline">
@@ -51,7 +50,7 @@ export function ShortUrl({ url }: { url: UrlDto }) {
             {toggleHttps(shortUrl, "remove")}
           </a>
         </ItemTitle>
-        <ItemDescription className="line-clamp-1 max-w-52 text-ellipsis">
+        <ItemDescription className="line-clamp-1 max-w-96 text-ellipsis">
           <a className="underline" href={url.originalUrl}>
             {toggleHttps(url.originalUrl, "remove")}
           </a>
@@ -64,11 +63,12 @@ export function ShortUrl({ url }: { url: UrlDto }) {
           <ExternalLink />
         </Button>
         <Button
+          disabled={deleteUrl.isPending}
           onClick={handleDeleteUrl}
           size="icon"
           variant="destructive-outline"
         >
-          <Trash2 />
+          {deleteUrl.isPending ? <Spinner /> : <Trash2 />}
         </Button>
       </ItemActions>
 
