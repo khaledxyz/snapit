@@ -1,0 +1,16 @@
+node_modules
+.git
+.env*
+*.log
+coverage
+.nyc_output
+.cache
+dist
+build
+.DS_Store
+*.swp
+*.swo
+.vscode
+.idea
+*.tmp
+logs
