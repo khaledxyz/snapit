@@ -68,7 +68,10 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    ignoreGlobalPrefix: true,
+  });
+
   SwaggerModule.setup("docs", app, document);
 
   const openapiPath = resolve(__dirname, "../openapi.json");

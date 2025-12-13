@@ -3,13 +3,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
+import { client } from "@snapit/sdk";
+
 import { App } from "./app";
 import "./index.css";
 
-import { client } from "@snapit/sdk";
+const baseUrl = `${import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? ""}${import.meta.env.VITE_API_PREFIX ?? ""}`;
 
 client.setConfig({
-  baseUrl: import.meta.env.VITE_API_URL,
+  baseUrl,
   credentials: "include",
 });
 
