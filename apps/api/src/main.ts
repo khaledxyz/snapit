@@ -15,17 +15,17 @@ import { Logger, LoggerErrorInterceptor } from "nestjs-pino";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  // 1. Application initialization
+  // Application initialization
   const app = await NestFactory.create(AppModule, {
     bodyParser: false,
     bufferLogs: true,
   });
   const configService = app.get(ConfigService);
 
-  // 2. Security middleware
+  // Security middleware
   app.use(helmet({ noSniff: false }));
 
-  // 3. CORS configuration
+  // CORS configuration
   const allowedOrigins =
     configService
       .get<string>("ALLOWED_ORIGINS")
@@ -39,7 +39,7 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // 4. Global configuration
+  // Global configuration
   app.setGlobalPrefix(configService.get<string>("APP_PREFIX"), {
     exclude: [{ path: "/", method: RequestMethod.GET }],
   });
@@ -56,11 +56,11 @@ async function bootstrap() {
     })
   );
 
-  // 5. Logging
+  // Logging
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
-  // 6. API documentation
+  // API documentation
   const config = new DocumentBuilder()
     .setTitle("My API")
     .setDescription("API description")
@@ -71,10 +71,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("docs", app, document);
 
-  const openapiPath = resolve(__dirname, "../../openapi.json");
+  const openapiPath = resolve(__dirname, "../openapi.json");
   writeFileSync(openapiPath, JSON.stringify(document, null, 2));
 
-  // 7. Start server
+  // Start server
   await app.listen(configService.getOrThrow("APP_PORT"));
 }
 bootstrap();

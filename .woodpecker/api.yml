@@ -1,0 +1,127 @@
+# ================================
+# API Workflow
+# Triggers: Changes to API or SDK
+# ================================
+
+when:
+  - event: [push, pull_request]
+    branch: master
+    path:
+      include:
+        - "apps/api/**"
+        - "packages/sdk/**"
+        - "pnpm-lock.yaml"
+        - "package.json"
+        - ".woodpecker/api.yml"
+
+steps:
+  # ================================
+  # Install Dependencies
+  # ================================
+  - name: install-dependencies
+    image: node:22
+    commands:
+      - corepack enable
+      - corepack prepare pnpm@latest --activate
+      - pnpm install --frozen-lockfile
+    environment:
+      HUSKY: 0
+      CI: true
+
+  # ================================
+  # Build Docker Image
+  # ================================
+  - name: build-image
+    image: docker:27-cli
+    when:
+      - event: push
+        branch: master
+    environment:
+      REGISTRY_USERNAME:
+        from_secret: REGISTRY_USERNAME
+      REGISTRY_PASSWORD:
+        from_secret: REGISTRY_PASSWORD
+      REGISTRY_URL:
+        from_secret: REGISTRY_URL
+    commands:
+      - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" --password-stdin
+      - export DOCKER_BUILDKIT=1
+      - docker build
+        --file apps/api/Dockerfile
+        --build-arg NODE_VERSION=22
+        --build-arg BUILDKIT_INLINE_CACHE=1
+        --cache-from $REGISTRY_URL/snapit-api:latest
+        -t $REGISTRY_URL/snapit-api:latest
+        -t $REGISTRY_URL/snapit-api:${CI_COMMIT_SHA:0:8}
+        .
+      - docker logout $REGISTRY_URL
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - install-dependencies
+
+  # ================================
+  # Push Docker Image
+  # ================================
+  - name: push-image
+    image: docker:27-cli
+    when:
+      - event: push
+        branch: master
+    environment:
+      REGISTRY_USERNAME:
+        from_secret: REGISTRY_USERNAME
+      REGISTRY_PASSWORD:
+        from_secret: REGISTRY_PASSWORD
+      REGISTRY_URL:
+        from_secret: REGISTRY_URL
+    commands:
+      - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" --password-stdin
+      - docker push $REGISTRY_URL/snapit-api:latest
+      - docker push $REGISTRY_URL/snapit-api:${CI_COMMIT_SHA:0:8}
+      - docker logout $REGISTRY_URL
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - build-image
+
+  # ================================
+  # Deploy API with Docker Compose
+  # ================================
+  - name: deploy
+    image: docker:27-cli
+    when:
+      - event: push
+        branch: master
+    environment:
+      REGISTRY_USERNAME:
+        from_secret: REGISTRY_USERNAME
+      REGISTRY_PASSWORD:
+        from_secret: REGISTRY_PASSWORD
+      REGISTRY_URL:
+        from_secret: REGISTRY_URL
+      API_ENV_FILE:
+        from_secret: API_ENV_FILE
+      INFRA_ENV_FILE:
+        from_secret: INFRA_ENV_FILE
+      API_VERSION: latest
+    commands:
+      - echo "$${INFRA_ENV_FILE}" > .env
+      - echo "$${API_ENV_FILE}" > apps/api/.env
+      - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" --password-stdin
+      - docker pull $REGISTRY_URL/snapit-api:latest
+      - docker compose up -d snapit-api --remove-orphans
+
+      # Wait for API to be healthy
+      - timeout 60 sh -c 'until docker compose ps snapit-api | grep -q "healthy"; do echo "Waiting for API..."; sleep 2; done'
+
+      # Run migrations using npx drizzle-kit (since pnpm isn't in production image)
+      - docker compose exec -T snapit-api npx drizzle-kit migrate
+
+      - docker image prune -af --filter "until=72h"
+      - docker compose ps
+      - docker logout $REGISTRY_URL
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - build-image

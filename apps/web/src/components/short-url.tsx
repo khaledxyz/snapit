@@ -46,12 +46,22 @@ export function ShortUrl({ url }: { url: UrlDto }) {
 
       <ItemContent>
         <ItemTitle>
-          <a className="underline" href={shortUrl}>
+          <a
+            className="underline"
+            href={shortUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             {toggleHttps(shortUrl, "remove")}
           </a>
         </ItemTitle>
         <ItemDescription className="line-clamp-1 max-w-96 text-ellipsis">
-          <a className="underline" href={url.originalUrl}>
+          <a
+            className="underline"
+            href={url.originalUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             {toggleHttps(url.originalUrl, "remove")}
           </a>
         </ItemDescription>
@@ -59,9 +69,16 @@ export function ShortUrl({ url }: { url: UrlDto }) {
 
       <ItemActions className="gap-1">
         <CopyButton content={shortUrl} helperText="Copy Short Url" />
-        <Button size="icon" variant="outline">
-          <ExternalLink />
-        </Button>
+        <Button
+          render={
+            <a href={shortUrl} rel="noopener noreferrer" target="_blank">
+              <ExternalLink />
+            </a>
+          }
+          size="icon"
+          variant="outline"
+        />
+
         <Button
           disabled={deleteUrl.isPending}
           onClick={handleDeleteUrl}

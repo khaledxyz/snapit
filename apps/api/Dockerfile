@@ -61,6 +61,10 @@ COPY --from=deps --chown=nestjs:nodejs /app/apps/api/node_modules ./apps/api/nod
 # Copy built application from builder stage
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/dist ./apps/api/dist
 
+# Copy drizzle migrations and config
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/drizzle ./apps/api/drizzle
+COPY --from=builder --chown=nestjs:nodejs /app/apps/api/drizzle.config.ts ./apps/api/
+
 # Copy package.json for metadata (optional but useful for debugging)
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/package.json ./apps/api/
 

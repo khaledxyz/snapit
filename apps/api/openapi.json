@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/metrics": {
+    "/metrics": {
       "get": {
         "operationId": "PrometheusController_index",
         "parameters": [],
@@ -10,10 +10,12 @@
             "description": ""
           }
         },
-        "tags": ["Prometheus"]
+        "tags": [
+          "Prometheus"
+        ]
       }
     },
-    "/api/urls": {
+    "/urls": {
       "post": {
         "operationId": "UrlsController_createUrl",
         "parameters": [],
@@ -39,10 +41,12 @@
             }
           }
         },
-        "tags": ["Urls"]
+        "tags": [
+          "Urls"
+        ]
       }
     },
-    "/api/urls/me": {
+    "/urls/me": {
       "get": {
         "operationId": "UrlsController_getUserUrls",
         "parameters": [],
@@ -61,10 +65,12 @@
             }
           }
         },
-        "tags": ["Urls"]
+        "tags": [
+          "Urls"
+        ]
       }
     },
-    "/api/urls/{code}": {
+    "/urls/{code}": {
       "delete": {
         "operationId": "UrlsController_deleteUrl",
         "parameters": [
@@ -82,7 +88,9 @@
             "description": ""
           }
         },
-        "tags": ["Urls"]
+        "tags": [
+          "Urls"
+        ]
       }
     }
   },
@@ -132,7 +140,9 @@
             "type": "string"
           }
         },
-        "required": ["originalUrl"]
+        "required": [
+          "originalUrl"
+        ]
       },
       "UrlDto": {
         "type": "object",

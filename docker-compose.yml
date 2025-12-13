@@ -1,67 +1,130 @@
 services:
   # ================================
-  # PostgreSQL Database
+  # PostgreSQL 18 Database
   # ================================
-  snapit-db:
-    image: postgres:16-alpine
-    container_name: snapit-db
+  snapit-postgres:
+    image: postgres:18-alpine
+    container_name: snapit-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: ${TZ}
+      POSTGRES_INITDB_ARGS: "--data-checksums --encoding=UTF8 --locale=en_US.utf8"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - api-network
+      - snapit-postgres-data:/var/lib/postgresql
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./postgres/init-scripts:/docker-entrypoint-initdb.d:ro
+      - ./postgres/backups:/backups
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 10s
+      start_period: 30s
+    ports:
+      - "127.0.0.1:5432:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "1.0"
+          memory: 1G
+    shm_size: 256mb
+    networks:
+      - snapit-internal
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - "com.snapit.service=database"
+      - "com.snapit.version=18"
 
   # ================================
-  # NestJS API
+  # Snapit API - Traefik Routing
   # ================================
   snapit-api:
     image: ${REGISTRY_URL}/snapit-api:${API_VERSION:-latest}
     container_name: snapit-api
     restart: unless-stopped
-    depends_on:
-      snapit-db:
-        condition: service_healthy
     env_file:
-      - .env
+      - apps/api/.env
+    depends_on:
+      snapit-postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:5000/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.snapit-api-http.entrypoints=http"
+      - "traefik.http.routers.snapit-api-http.rule=Host(`${API_HOST}`)"
+      - "traefik.http.routers.snapit-api-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.snapit-api-secure.entrypoints=https"
+      - "traefik.http.routers.snapit-api-secure.rule=Host(`${API_HOST}`)"
+      - "traefik.http.routers.snapit-api-secure.tls=true"
+      - "traefik.http.routers.snapit-api-secure.tls.certresolver=le"
+      - "traefik.http.routers.snapit-api-secure.tls.options=modern-tls@file"
+      - "traefik.http.services.snapit-api.loadbalancer.server.port=5000"
     networks:
-      - api-network
       - proxy-network
+      - snapit-internal
 
   # ================================
-  # React Web App
+  # Snapit Web - Traefik Routing
   # ================================
   snapit-web:
     image: ${REGISTRY_URL}/snapit-web:${WEB_VERSION:-latest}
     container_name: snapit-web
     restart: unless-stopped
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.snapit-web-http.entrypoints=http"
+      - "traefik.http.routers.snapit-web-http.rule=Host(`${WEB_HOST}`)"
+      - "traefik.http.routers.snapit-web-http.middlewares=https-redirect@file"
+      - "traefik.http.routers.snapit-web-secure.entrypoints=https"
+      - "traefik.http.routers.snapit-web-secure.rule=Host(`${WEB_HOST}`)"
+      - "traefik.http.routers.snapit-web-secure.tls=true"
+      - "traefik.http.routers.snapit-web-secure.tls.certresolver=le"
+      - "traefik.http.routers.snapit-web-secure.tls.options=modern-tls@file"
+      - "traefik.http.services.snapit-web.loadbalancer.server.port=80"
+
     networks:
       - proxy-network
 
-# ================================
-# Networks
-# ================================
 networks:
   proxy-network:
     external: true
     name: ${PROXY_NETWORK}
 
-  api-network:
-    internal: true
+  snapit-internal:
     driver: bridge
+    internal: false
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
 
-# ================================
-# Volumes
-# ================================
 volumes:
-  postgres-data:
+  snapit-postgres-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${POSTGRES_DATA_PATH:-./data/postgres}

@@ -27,11 +27,13 @@ COPY apps/web ./apps/web
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Build arguments for environment variables
-# Uncomment and customize as needed:
-# ARG VITE_API_URL
-# ARG VITE_APP_ENV=production
-# ENV VITE_API_URL=${VITE_API_URL}
-# ENV VITE_APP_ENV=${VITE_APP_ENV}
+ARG VITE_API_URL
+ARG VITE_API_PREFIX
+ARG VITE_CLIENT_URL
+
+ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_API_PREFIX=${VITE_API_PREFIX}
+ENV VITE_CLIENT_URL=${VITE_CLIENT_URL}
 
 # Build the application
 WORKDIR /app/apps/web
