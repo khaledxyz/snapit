@@ -333,12 +333,12 @@ export function Shortener() {
             <AlertDescription>
               <a
                 className="font-mono underline"
-                href={`${import.meta.env.VITE_API_URL}/${generatedCode}`}
+                href={`${import.meta.env.VITE_SHORT_URL}/${generatedCode}`}
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 {toggleHttps(
-                  `${import.meta.env.VITE_API_URL}/${generatedCode}`,
+                  `${import.meta.env.VITE_SHORT_URL}/${generatedCode}`,
                   "remove"
                 )}
               </a>
