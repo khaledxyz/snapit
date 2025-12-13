@@ -22,7 +22,9 @@ const containerClasses =
 
 export function UrlsList() {
   const { data: session, isPending } = authClient.useSession();
-  const { data: urls = [], isLoading } = useUserUrls();
+  const { data: urls = [], isLoading } = useUserUrls({
+    enabled: !!session,
+  });
 
   if (!session) {
     return <EmptyNotLoggedIn />;

@@ -37,7 +37,9 @@ export const useCreateUrl = (
     ...options,
   });
 
-export const useUserUrls = (options?: UseQueryOptions<UrlDto[], Error>) =>
+export const useUserUrls = (
+  options?: Omit<UseQueryOptions<UrlDto[], Error>, "queryKey" | "queryFn">
+) =>
   useQuery<UrlDto[], Error>({
     queryKey: urlsQueryKeys.lists(),
     queryFn: async () => {
