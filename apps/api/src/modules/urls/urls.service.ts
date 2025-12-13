@@ -53,7 +53,7 @@ export class UrlsService {
         description,
         passwordHash,
         expiresAt,
-        userId,
+        userId: userId || null,
       })
       .returning();
 
