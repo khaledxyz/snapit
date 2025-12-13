@@ -23,7 +23,7 @@ import { timeAgo, toggleHttps } from "@/lib/utils";
 export function ShortUrl({ url }: { url: UrlDto }) {
   const deleteUrl = useDeleteUrl();
   const prompt = usePrompt();
-  const shortUrl = `${import.meta.env.VITE_API_URL}/${url.code}`;
+  const shortUrl = `${import.meta.env.VITE_SHORT_URL}/${url.code}`;
 
   async function handleDeleteUrl() {
     const confirm = await prompt({
