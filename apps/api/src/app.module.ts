@@ -12,6 +12,8 @@ import { RateLimiterModule } from "@infra/rate-limiter/rate-limiter.module";
 import { AuthModule } from "@modules/auth/auth.module";
 import { UrlsModule } from "@modules/urls/urls.module";
 
+import { AppController } from './app.controller';
+
 @Module({
   imports: [
     // INFRA
@@ -26,7 +28,7 @@ import { UrlsModule } from "@modules/urls/urls.module";
     AuthModule,
     UrlsModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,

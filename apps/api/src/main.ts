@@ -41,7 +41,7 @@ async function bootstrap() {
 
   // Global configuration
   app.setGlobalPrefix(configService.get<string>("APP_PREFIX"), {
-    exclude: [{ path: "/", method: RequestMethod.GET }],
+    exclude: [{ path: ":code", method: RequestMethod.GET }],
   });
 
   app.useGlobalPipes(
