@@ -13,6 +13,7 @@ when:
         - "pnpm-lock.yaml"
         - "package.json"
         - ".woodpecker/api.yml"
+        - "docker-compose.yml"
 
 steps:
   # ================================
