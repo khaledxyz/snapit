@@ -26,6 +26,15 @@ pool
 app.use(express.json());
 app.disable("x-powered-by");
 
+// Permanent redirect root to client app
+app.get("/", (_, res) => {
+  const clientUrl = process.env.CLIENT_URL;
+  if (!clientUrl) {
+    return res.status(500).send("CLIENT_URL not set");
+  }
+  res.redirect(301, clientUrl);
+});
+
 // Health check
 app.get("/health", async (_, res) => {
   try {
