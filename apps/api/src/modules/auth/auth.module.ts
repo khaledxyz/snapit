@@ -21,6 +21,15 @@ const SESSION_FRESH_AGE_MINUTES = 5;
     BetterAuthModule.forRootAsync({
       imports: [DatabaseModule, ConfigModule],
       useFactory: (database: NodePgDatabase, configService: ConfigService) => ({
+        middleware: (req, _res, next) => {
+          // Fix for Express 5: The /*path pattern sets req.url=/ and req.baseUrl=full_path
+          // better-call concatenates baseUrl+url creating a trailing slash that causes 404
+          // This middleware restores req.url to the full path before the handler runs
+          // thanks to @Brainisthekey
+          req.url = req.originalUrl;
+          req.baseUrl = "";
+          next();
+        },
         auth: betterAuth({
           appName: configService.getOrThrow("APP_NAME"),
 
