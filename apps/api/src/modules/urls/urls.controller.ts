@@ -35,7 +35,8 @@ export class UrlsController {
     @Body() createUrlDto: CreateUrlDto,
     @Session() session: UserSession
   ): Promise<UrlDto> {
-    return await this.urlsService.createUrl(createUrlDto, session.user.id);
+    const userId = session?.user?.id ?? null;
+    return await this.urlsService.createUrl(createUrlDto, userId);
   }
 
   @Get("/me")
