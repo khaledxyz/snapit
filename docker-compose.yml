@@ -88,6 +88,50 @@ services:
       - snapit-internal
 
   # ================================
+  # Snapit Resolver - Traefik Routing
+  # ================================
+  snapit-resolver:
+    image: ${REGISTRY_URL}/snapit-resolver:${RESOLVER_VERSION:-latest}
+    container_name: snapit-resolver
+    restart: unless-stopped
+    env_file:
+      - apps/resolver/.env
+    depends_on:
+      snapit-postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:5001/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "traefik.enable=true"
+      # HTTP router
+      - "traefik.http.routers.snapit-resolver-http.entrypoints=http"
+      - "traefik.http.routers.snapit-resolver-http.rule=Host(`${RESOLVER_HOST}`)"
+      - "traefik.http.routers.snapit-resolver-http.middlewares=https-redirect@file"
+      # HTTPS router
+      - "traefik.http.routers.snapit-resolver-secure.entrypoints=https"
+      - "traefik.http.routers.snapit-resolver-secure.rule=Host(`${RESOLVER_HOST}`)"
+      - "traefik.http.routers.snapit-resolver-secure.tls=true"
+      - "traefik.http.routers.snapit-resolver-secure.tls.certresolver=le"
+      - "traefik.http.routers.snapit-resolver-secure.tls.options=modern-tls@file"
+      # Service
+      - "traefik.http.services.snapit-resolver.loadbalancer.server.port=5001"
+    networks:
+      - proxy-network
+      - snapit-internal
+
+  # ================================
   # Snapit Web - Traefik Routing
   # ================================
   snapit-web:

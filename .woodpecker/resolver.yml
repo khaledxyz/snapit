@@ -1,0 +1,119 @@
+when:
+  - event: [push, pull_request]
+    branch: master
+    path:
+      include:
+        - "apps/resolver/**"
+        - "pnpm-lock.yaml"
+        - "package.json"
+        - ".woodpecker/resolver.yml"
+        - "docker-compose.yml"
+
+steps:
+  # ================================
+  # Install Dependencies
+  # ================================
+  - name: install-dependencies
+    image: node:22
+    commands:
+      - corepack enable
+      - corepack prepare pnpm@latest --activate
+      - pnpm install --frozen-lockfile
+    environment:
+      HUSKY: 0
+      CI: true
+
+  # ================================
+  # Build Docker Image
+  # ================================
+  - name: build-image
+    image: docker:27-cli
+    when:
+      - event: push
+        branch: master
+    environment:
+      REGISTRY_USERNAME:
+        from_secret: REGISTRY_USERNAME
+      REGISTRY_PASSWORD:
+        from_secret: REGISTRY_PASSWORD
+      REGISTRY_URL:
+        from_secret: REGISTRY_URL
+    commands:
+      - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" --password-stdin
+      - export DOCKER_BUILDKIT=1
+      - docker build
+        --file apps/resolver/Dockerfile
+        --build-arg NODE_VERSION=22
+        --build-arg BUILDKIT_INLINE_CACHE=1
+        --cache-from $REGISTRY_URL/snapit-resolver:latest
+        -t $REGISTRY_URL/snapit-resolver:latest
+        -t $REGISTRY_URL/snapit-resolver:${CI_COMMIT_SHA:0:8}
+        .
+      - docker logout $REGISTRY_URL
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - install-dependencies
+
+  # ================================
+  # Push Docker Image
+  # ================================
+  - name: push-image
+    image: docker:27-cli
+    when:
+      - event: push
+        branch: master
+    environment:
+      REGISTRY_USERNAME:
+        from_secret: REGISTRY_USERNAME
+      REGISTRY_PASSWORD:
+        from_secret: REGISTRY_PASSWORD
+      REGISTRY_URL:
+        from_secret: REGISTRY_URL
+    commands:
+      - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" --password-stdin
+      - docker push $REGISTRY_URL/snapit-resolver:latest
+      - docker push $REGISTRY_URL/snapit-resolver:${CI_COMMIT_SHA:0:8}
+      - docker logout $REGISTRY_URL
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - build-image
+
+  # ================================
+  # Deploy Resolver with Docker Compose
+  # ================================
+  - name: deploy
+    image: docker:27-cli
+    when:
+      - event: push
+        branch: master
+    environment:
+      REGISTRY_USERNAME:
+        from_secret: REGISTRY_USERNAME
+      REGISTRY_PASSWORD:
+        from_secret: REGISTRY_PASSWORD
+      REGISTRY_URL:
+        from_secret: REGISTRY_URL
+      RESOLVER_ENV_FILE:
+        from_secret: RESOLVER_ENV_FILE
+      INFRA_ENV_FILE:
+        from_secret: INFRA_ENV_FILE
+      RESOLVER_VERSION: latest
+    commands:
+      - echo "$${INFRA_ENV_FILE}" > .env
+      - echo "$${RESOLVER_ENV_FILE}" > apps/resolver/.env
+      - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" --password-stdin
+      - docker pull $REGISTRY_URL/snapit-resolver:latest
+      - docker compose up -d snapit-resolver --remove-orphans
+
+      # Wait for resolver to be healthy
+      - timeout 60 sh -c 'until docker compose ps snapit-resolver | grep -q "healthy"; do echo "Waiting for resolver..."; sleep 2; done'
+
+      - docker image prune -af --filter "until=72h"
+      - docker compose ps
+      - docker logout $REGISTRY_URL
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - push-image
