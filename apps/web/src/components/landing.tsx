@@ -4,7 +4,7 @@ import { UrlsList } from "./urls-list";
 export function Landing() {
   return (
     <main className="container relative border-x py-12">
-      <div className="mb-20 space-y-6 text-center">
+      <div className="mb-20 space-y-6 text-left">
         <h1 className="font-black text-5xl leading-[1.1] tracking-tighter md:text-6xl lg:text-7xl">
           Long URLs?
           <br />
