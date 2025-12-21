@@ -114,7 +114,7 @@ steps:
       - docker compose up -d snapit-api --remove-orphans
 
       # Wait for API to be healthy
-      - timeout 60 sh -c 'until docker compose ps snapit-api | grep -q "healthy"; do echo "Waiting for API..."; sleep 2; done'
+      - timeout 90 sh -c 'until docker compose ps snapit-api | grep -q "healthy"; do echo "Waiting for API..."; sleep 2; done'
 
       # Run migrations using npx drizzle-kit (since pnpm isn't in production image)
       - docker compose exec -T snapit-api npx drizzle-kit migrate
