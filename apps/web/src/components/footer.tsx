@@ -13,30 +13,30 @@ export function Footer() {
         <div className="flex items-center gap-2">
           <Logo className="text-muted-foreground" size="sm" />
           <Separator orientation="vertical" />
-          <span className="text-muted-foreground text-sm">
-            Created by khaledxyz
-          </span>
-          <Separator className="hidden sm:block" orientation="vertical" />
-          <div className="hidden items-center gap-3 sm:flex">
-            <a
-              className="text-muted-foreground text-sm transition-colors hover:text-foreground"
-              href="/terms"
-            >
-              Terms
-            </a>
-            <a
-              className="text-muted-foreground text-sm transition-colors hover:text-foreground"
-              href="/privacy"
-            >
-              Privacy
-            </a>
-          </div>
+          <a
+            className="text-muted-foreground text-sm"
+            href="https://github.com/khaledxyz"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Created by <span className="underline">khaledxyz</span>
+          </a>
         </div>
 
         <div className="flex items-center gap-1">
-          <Button size="icon-sm" variant="outline">
-            <GithubIcon />
-          </Button>
+          <Button
+            render={
+              <a
+                href="https://github.com/khaledxyz/snapit"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <GithubIcon />
+              </a>
+            }
+            size="icon-sm"
+            variant="outline"
+          />
           <ThemeSwitcher />
         </div>
       </div>
