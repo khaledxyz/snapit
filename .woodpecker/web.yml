@@ -119,6 +119,9 @@ steps:
     commands:
       - mkdir -p apps/api # temp
       - echo "" > apps/api/.env # temp
+      - mkdir -p apps/resolver # temp
+      - echo "" > apps/resolver/.env # temp
+
       - echo "$${INFRA_ENV_FILE}" > .env
       - echo "$REGISTRY_PASSWORD" | docker login $REGISTRY_URL -u "$REGISTRY_USERNAME" --password-stdin
       - docker pull $REGISTRY_URL/snapit-web:latest
