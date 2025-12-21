@@ -73,31 +73,16 @@ services:
       start_period: 40s
     labels:
       - "traefik.enable=true"
-
-      # api subdomain (api.${API_HOST})
       - "traefik.http.routers.snapit-api-http.entrypoints=http"
       - "traefik.http.routers.snapit-api-http.rule=Host(`api.${API_HOST}`)"
       - "traefik.http.routers.snapit-api-http.middlewares=https-redirect@file"
-
       - "traefik.http.routers.snapit-api-secure.entrypoints=https"
       - "traefik.http.routers.snapit-api-secure.rule=Host(`api.${API_HOST}`)"
       - "traefik.http.routers.snapit-api-secure.tls=true"
       - "traefik.http.routers.snapit-api-secure.tls.certresolver=le"
       - "traefik.http.routers.snapit-api-secure.tls.options=modern-tls@file"
-
-      # root domain (${API_HOST}) - also points to API
-      - "traefik.http.routers.snapit-root-http.entrypoints=http"
-      - "traefik.http.routers.snapit-root-http.rule=Host(`${API_HOST}`)"
-      - "traefik.http.routers.snapit-root-http.middlewares=https-redirect@file"
-
-      - "traefik.http.routers.snapit-root-secure.entrypoints=https"
-      - "traefik.http.routers.snapit-root-secure.rule=Host(`${API_HOST}`)"
-      - "traefik.http.routers.snapit-root-secure.tls=true"
-      - "traefik.http.routers.snapit-root-secure.tls.certresolver=le"
-      - "traefik.http.routers.snapit-root-secure.tls.options=modern-tls@file"
-
-      # Service definition (only needs to be defined once)
       - "traefik.http.services.snapit-api.loadbalancer.server.port=5000"
+
     networks:
       - proxy-network
       - snapit-internal
