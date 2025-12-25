@@ -13,9 +13,11 @@ export const url = pgTable(
     description: text("description"),
     passwordHash: text("password_hash"),
     clickCount: integer("click_count").default(0).notNull(),
-    expiresAt: timestamp("expires_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
@@ -34,7 +36,9 @@ export const urlClick = pgTable(
     urlId: text("url_id")
       .notNull()
       .references(() => url.id, { onDelete: "cascade" }),
-    clickedAt: timestamp("clicked_at").defaultNow().notNull(),
+    clickedAt: timestamp("clicked_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
     referer: text("referer"),
