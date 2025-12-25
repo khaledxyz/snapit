@@ -6,6 +6,7 @@ export class UrlDto {
   originalUrl: string;
   title?: string;
   description?: string;
+  clickCount: number;
   expiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;

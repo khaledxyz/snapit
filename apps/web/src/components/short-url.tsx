@@ -91,7 +91,11 @@ export function ShortUrl({ url }: { url: UrlDto }) {
 
       <ItemFooter className="justify-start gap-1">
         <Badge variant="outline">Created {timeAgo(url.createdAt)}</Badge>
-        <Badge variant="outline">{"url.clickCount"} clicks</Badge>
+        <Badge variant="outline">
+          {url.clickCount
+            ? `${url.clickCount} ${url.clickCount > 1 ? "Clicks" : "Click"}`
+            : "No clicks yet"}
+        </Badge>
       </ItemFooter>
     </Item>
   );

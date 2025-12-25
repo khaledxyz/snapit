@@ -162,6 +162,9 @@
           "description": {
             "type": "string"
           },
+          "clickCount": {
+            "type": "number"
+          },
           "expiresAt": {
             "format": "date-time",
             "type": "string"
@@ -185,6 +188,7 @@
           "id",
           "code",
           "originalUrl",
+          "clickCount",
           "createdAt",
           "updatedAt",
           "passwordHash"
