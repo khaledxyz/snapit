@@ -15,7 +15,7 @@ import * as schema from "@infra/database/schema";
 import { CodeGeneratorService } from "@modules/code-generator/code-generator.service";
 import { PasswordService } from "@modules/password/password.service";
 
-import { and, eq, gt, isNull, or } from "drizzle-orm";
+import { and, desc, eq, gt, isNull, or } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 import { CreateUrlDto } from "./dto/create-url.dto";
@@ -89,7 +89,8 @@ export class UrlsService {
           eq(schema.url.userId, userId),
           or(isNull(schema.url.expiresAt), gt(schema.url.expiresAt, new Date()))
         )
-      );
+      )
+      .orderBy(desc(schema.url.createdAt));
   }
 
   async deleteUrl(code: string, userId: string): Promise<void> {
