@@ -12,13 +12,26 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function timeAgo(date?: Date | string | number | null): string {
+  if (!date) {
+    return "Unknown";
+  }
+
   const postDate = dayjs(date);
+  if (!postDate.isValid()) {
+    return "Invalid date";
+  }
+
   const now = dayjs();
   const hoursAgo = now.diff(postDate, "hour");
 
+  // Future dates (edge case)
+  if (hoursAgo < 0) {
+    return postDate.format("MMM D, YYYY");
+  }
+
   // Less than 24 hours: show relative time
   if (hoursAgo < 24) {
-    return postDate.fromNow(); // "29 minutes ago", "2 hours ago"
+    return postDate.fromNow();
   }
 
   // Yesterday
