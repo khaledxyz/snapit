@@ -146,7 +146,7 @@ export function Shortener() {
     <Card>
       <CardPanel className="space-y-4">
         <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="flex items-start gap-1">
+          <div className="flex flex-col gap-1 md:flex-row md:items-start">
             <Controller
               control={form.control}
               name="originalUrl"
@@ -175,7 +175,12 @@ export function Shortener() {
               )}
             />
             <div className="flex gap-1 pt-6">
-              <Button disabled={createUrl.isPending} size="xl" type="submit">
+              <Button
+                className="flex-1"
+                disabled={createUrl.isPending}
+                size="xl"
+                type="submit"
+              >
                 {createUrl.isPending ? <Spinner /> : null}
                 Snapit
               </Button>
