@@ -7,6 +7,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
 // Database connection pool
 const pool = new Pool({
@@ -26,12 +27,18 @@ pool
 app.use(express.json());
 app.disable("x-powered-by");
 
+// Helper function to redirect to client error page
+const redirectToError = (
+  res: Response,
+  statusCode: number,
+  message: string
+) => {
+  const errorUrl = `${clientUrl}/error?code=${statusCode}&message=${encodeURIComponent(message)}`;
+  res.redirect(302, errorUrl);
+};
+
 // Permanent redirect root to client app
 app.get("/", (_, res) => {
-  const clientUrl = process.env.CLIENT_URL;
-  if (!clientUrl) {
-    return res.status(500).send("CLIENT_URL not set");
-  }
   res.redirect(301, clientUrl);
 });
 
@@ -55,15 +62,15 @@ app.get("/:code", async (req: Request, res: Response) => {
 
     // Fetch URL and validate expiration
     const urlResult = await client.query(
-      `SELECT id, original_url, expires_at, password_hash 
-       FROM url 
+      `SELECT id, original_url, expires_at, password_hash
+       FROM url
        WHERE code = $1`,
       [code]
     );
 
     if (urlResult.rows.length === 0) {
       await client.query("ROLLBACK");
-      return res.status(404).send("Short URL not found");
+      return redirectToError(res, 404, "Short URL not found");
     }
 
     const url = urlResult.rows[0];
@@ -71,13 +78,13 @@ app.get("/:code", async (req: Request, res: Response) => {
     // Check if expired
     if (url.expires_at && new Date(url.expires_at) < new Date()) {
       await client.query("ROLLBACK");
-      return res.status(410).send("This short URL has expired");
+      return redirectToError(res, 410, "This short URL has expired");
     }
 
     // Check if password protected
     if (url.password_hash) {
       await client.query("ROLLBACK");
-      return res.status(401).send("This URL is password protected");
+      return redirectToError(res, 401, "This URL is password protected");
     }
 
     // Track analytics - increment click count
@@ -96,7 +103,7 @@ app.get("/:code", async (req: Request, res: Response) => {
     const referer = req.headers.referer || req.headers.referrer || null;
 
     await client.query(
-      `INSERT INTO url_click (id, url_id, ip_address, user_agent, referer, clicked_at) 
+      `INSERT INTO url_click (id, url_id, ip_address, user_agent, referer, clicked_at)
        VALUES ($1, $2, $3, $4, $5, NOW())`,
       [clickId, url.id, ipAddress, userAgent, referer]
     );
@@ -108,7 +115,7 @@ app.get("/:code", async (req: Request, res: Response) => {
   } catch (error) {
     await client.query("ROLLBACK");
     console.error("Error resolving URL:", error);
-    res.status(500).send("Internal server error");
+    return redirectToError(res, 500, "Internal server error");
   } finally {
     client.release();
   }
@@ -116,13 +123,13 @@ app.get("/:code", async (req: Request, res: Response) => {
 
 // 404 handler
 app.use((_, res) => {
-  res.status(404).send("Not found");
+  redirectToError(res, 404, "Page not found");
 });
 
 // Error handler
 app.use((err: Error, _: Request, res: Response) => {
   console.error("Unhandled error:", err);
-  res.status(500).send("Internal server error");
+  redirectToError(res, 500, "Internal server error");
 });
 
 // Graceful shutdown

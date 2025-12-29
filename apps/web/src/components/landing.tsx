@@ -1,8 +1,40 @@
+import { useMemo } from "react";
+
+import { CircleSlashIcon } from "lucide-react";
+
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+
 import Background from "./background";
 import { Shortener } from "./shortener";
+import { Button } from "./ui/button";
 import { UrlsList } from "./urls-list";
 
 export function Landing() {
+  // Check if the current URL matches the error pattern
+  const error = useMemo(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    const message = params.get("message");
+
+    if (window.location.pathname === "/error") {
+      return {
+        code,
+        message,
+      };
+    }
+    return null;
+  }, []);
+
   return (
     <main className="container relative p-0">
       <div className="container relative border-x py-12">
@@ -24,7 +56,31 @@ export function Landing() {
 
         <div className="space-y-5">
           <Shortener />
-          <UrlsList />
+          {error ? (
+            <Empty className="border">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <CircleSlashIcon />
+                </EmptyMedia>
+                <EmptyTitle>Error: {error.code}</EmptyTitle>
+                <EmptyDescription>{error.message}</EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      window.location.href = "/";
+                    }
+                  }}
+                  variant="outline"
+                >
+                  Dismiss
+                </Button>
+              </EmptyContent>
+            </Empty>
+          ) : (
+            <UrlsList />
+          )}
         </div>
       </div>
     </main>
