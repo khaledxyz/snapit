@@ -208,7 +208,15 @@ export function Shortener() {
                   fieldState: FieldState;
                 }) => (
                   <Field invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Custom Slug</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      Custom Slug
+                      {session ? null : (
+                        <span className="text-muted-foreground">
+                          {" "}
+                          login to create custom slugs
+                        </span>
+                      )}
+                    </FieldLabel>
                     <Input
                       {...field}
                       autoComplete="off"
@@ -260,7 +268,7 @@ export function Shortener() {
                     field: ControllerRenderProps<ShortenerFormData, "password">;
                     fieldState: FieldState;
                   }) => (
-                    <Field invalid={fieldState.invalid}>
+                    <Field className="hidden" invalid={fieldState.invalid}>
                       <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                       <Input
                         {...field}
