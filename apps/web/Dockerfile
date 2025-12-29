@@ -51,6 +51,8 @@ RUN apk add --no-cache curl
 
 # Copy built assets from builder stage
 COPY --from=builder /app/apps/web/dist /usr/local/apache2/htdocs/
+# Copy .htaccess for SPA routing
+COPY apps/web/public/.htaccess /usr/local/apache2/htdocs/.htaccess
 
 # Optional: Add custom httpd.conf here if needed
 # Default httpd config works fine for serving static files
