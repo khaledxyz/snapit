@@ -1,10 +1,9 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <not needed> */
 import { Activity } from "react";
 
-import { LinkIcon, LogInIcon } from "lucide-react";
+import { GithubIcon, LinkIcon, LogInIcon } from "lucide-react";
 
 import { ShortUrl, ShortUrlSkeleton } from "@/components/short-url";
-import { Button } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -16,6 +15,8 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUserUrls } from "@/hooks/urls";
 import { authClient } from "@/lib/auth-client";
+
+import { GithubButton } from "./github-button";
 
 const containerClasses =
   "relative h-96 w-full overflow-hidden rounded-xl border border-dashed";
@@ -70,10 +71,10 @@ function EmptyNotLoggedIn() {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button size="sm">
-          <LogInIcon className="opacity-72" />
-          Login
-        </Button>
+        <GithubButton>
+          <span>Login With</span>
+          <GithubIcon />
+        </GithubButton>
       </EmptyContent>
     </Empty>
   );
